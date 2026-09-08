@@ -140,12 +140,33 @@
     }
   },
   "firestore": {
-    "students": { "entity": "Student" },
-    "projects": { "entity": "Project" },
-    "events": { "entity": "UniversityEvent" },
-    "announcements": { "entity": "Announcement" },
-    "certificates": { "entity": "Certificate" },
-    "teachers": { "entity": "Teacher" },
-    "users": { "entity": "UserAccount" }
+    "/students/{studentId}": {
+      "schema": "Student",
+      "description": "Talabalar bazasi va shaxsiy portfolio ma'lumotlari"
+    },
+    "/projects/{projectId}": {
+      "schema": "Project",
+      "description": "Talabalar va kafedralar ilmiy loyihalari"
+    },
+    "/events/{eventId}": {
+      "schema": "UniversityEvent",
+      "description": "Universitet tadbirlari va tanlovlar"
+    },
+    "/announcements/{announcementId}": {
+      "schema": "Announcement",
+      "description": "E'lonlar va yangiliklar"
+    },
+    "/certificates/{certificateId}": {
+      "schema": "Certificate",
+      "description": "Elektron sertifikatlar va QR kodlar"
+    },
+    "/teachers/{teacherId}": {
+      "schema": "Teacher",
+      "description": "Filial o'qituvchilari va ilmiy rahbarlar bazasi"
+    },
+    "/users/{userId}": {
+      "schema": "UserAccount",
+      "description": "Barcha tizim foydalanuvchilari va nazorat akkountlari"
+    }
   }
 }

@@ -11,7 +11,6 @@ import {
   Clock, 
   Sparkles, 
   BookOpen, 
-  QrCode, 
   Download, 
   GraduationCap, 
   FileText, 
@@ -20,23 +19,38 @@ import {
   AlertCircle,
   FolderGit2,
   Medal,
-  ChevronRight
+  ChevronRight,
+  Edit3,
+  Search,
+  Filter,
+  Bell,
+  Check,
+  Flame,
+  FileCheck,
+  QrCode
 } from 'lucide-react';
-import { Student, Project, UniversityEvent, Certificate, Achievement, AchievementCategory } from '../types';
+import { Student, Project, UniversityEvent, Certificate, Achievement, AchievementCategory, Announcement } from '../types';
 import { useEyeCare } from '../context/EyeCareContext';
 import { UserAvatar } from './UserAvatar';
+import { EditStudentModal } from './EditStudentModal';
+import { RegisterEventModal } from './RegisterEventModal';
 
 interface StudentPortalViewProps {
   student: Student;
   allProjects: Project[];
   allEvents: UniversityEvent[];
   allCertificates: Certificate[];
+  allStudents?: Student[];
+  allAnnouncements?: Announcement[];
   onSelectProject: (project: Project) => void;
   onSelectCertificate: (certificate: Certificate) => void;
   onOpenVerifyModal: (certNumber?: string) => void;
   onNavigateTab: (tab: any) => void;
   onAddProject: (newProject: Project) => void;
   onSubmitAchievement: (studentId: string, achievement: Achievement) => void;
+  onRegisterForEvent?: (eventId: string, studentId: string, projectId?: string, projectName?: string, topicOrNote?: string) => void;
+  onUnregisterForEvent?: (eventId: string, studentId: string) => void;
+  onUpdateStudentProfile?: (updatedStudent: Student) => void;
   rank?: number;
 }
 
@@ -45,15 +59,20 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
   allProjects = [],
   allEvents = [],
   allCertificates = [],
+  allStudents = [],
+  allAnnouncements = [],
   onSelectProject,
   onSelectCertificate,
   onOpenVerifyModal,
   onNavigateTab,
   onAddProject,
   onSubmitAchievement,
+  onRegisterForEvent,
+  onUnregisterForEvent,
+  onUpdateStudentProfile,
   rank = 1,
 }) => {
-  const [activeSection, setActiveSection] = useState<'projects' | 'achievements' | 'certificates' | 'events' | 'recommendation'>('projects');
+  const [activeSection, setActiveSection] = useState<'projects' | 'achievements' | 'certificates' | 'events' | 'rating' | 'announcements' | 'recommendation'>('projects');
   const { mode: eyeMode } = useEyeCare();
   const isDark = eyeMode === 'calm-dark';
   const isSepia = eyeMode === 'warm-sepia';
@@ -126,6 +145,9 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
   // Modals for student actions
   const [newProjectModalOpen, setNewProjectModalOpen] = useState(false);
   const [newAchievementModalOpen, setNewAchievementModalOpen] = useState(false);
+  const [editProfileModalOpen, setEditProfileModalOpen] = useState(false);
+  const [registerEventModalOpen, setRegisterEventModalOpen] = useState(false);
+  const [selectedEventForReg, setSelectedEventForReg] = useState<UniversityEvent | null>(null);
 
   // New Project Form State
   const [projName, setProjName] = useState('');
@@ -135,6 +157,8 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
   const [projStage, setProjStage] = useState<'goya' | 'tadqiqot' | 'prototip' | 'sinovda' | 'tijoratlashtirish'>('prototip');
   const [projFunding, setProjFunding] = useState('Institut startap inkubatori');
   const [projTeam, setProjTeam] = useState('3 nafar talaba');
+  const [projPresentationName, setProjPresentationName] = useState('');
+  const [projPresentationUrl, setProjPresentationUrl] = useState('');
 
   // New Achievement Form State
   const [achTitle, setAchTitle] = useState('');
@@ -144,6 +168,40 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
   const [achPoints, setAchPoints] = useState(50);
   const [achDate, setAchDate] = useState(new Date().toISOString().split('T')[0]);
   const [achIssuer, setAchIssuer] = useState('OAK jurnali / Ilmiy konferensiya');
+  const [achDocName, setAchDocName] = useState('');
+  const [achDocUrl, setAchDocUrl] = useState('');
+
+  // Top 100 Search & Filters
+  const [top100Search, setTop100Search] = useState('');
+  const [top100FacultyFilter, setTop100FacultyFilter] = useState('all');
+
+  const handlePresentationFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProjPresentationName(file.name);
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          setProjPresentationUrl(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDocFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAchDocName(file.name);
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          setAchDocUrl(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Filter student's own projects
   const myProjects = allProjects.filter((p) => 
@@ -183,6 +241,8 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
       hasPrototype: projStage === 'prototip' || projStage === 'sinovda' || projStage === 'tijoratlashtirish',
       funding: projFunding,
       awards: 'Yangi taqdim etilgan startap loyiha',
+      presentationUrl: projPresentationUrl || undefined,
+      presentationName: projPresentationName || undefined,
       imageUrl: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80',
       status: 'faol',
       createdAt: new Date().toISOString().split('T')[0]
@@ -193,6 +253,8 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
     setProjName('');
     setProjProblem('');
     setProjSolution('');
+    setProjPresentationName('');
+    setProjPresentationUrl('');
   };
 
   const handleCreateAchievementSubmit = (e: React.FormEvent) => {
@@ -208,6 +270,8 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
       date: achDate,
       level: achLevel,
       points: Number(achPoints) || 50,
+      documentUrl: achDocUrl || undefined,
+      documentName: achDocName || undefined,
       verified: false, // will be verified by supervisor
       verifiedBy: student.scientificSupervisor,
       issuer: achIssuer.trim() || 'Rasmiy tashkilot'
@@ -217,6 +281,8 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
     setNewAchievementModalOpen(false);
     setAchTitle('');
     setAchDesc('');
+    setAchDocName('');
+    setAchDocUrl('');
   };
 
   return (
@@ -267,7 +333,23 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
                 <span>Ilmiy rahbar: <strong className="text-amber-300">{student.scientificSupervisor}</strong></span>
                 <span className="hidden sm:inline">•</span>
                 <span>Aloqa: <strong className="text-white">{student.phone}</strong></span>
+                <span className="hidden sm:inline">•</span>
+                <span>Telegram: <strong className="text-sky-300">@{student.telegramUsername?.replace('@', '')}</strong></span>
               </div>
+
+              {onUpdateStudentProfile && (
+                <div className="pt-2">
+                  <button
+                    id="student-edit-profile-btn"
+                    type="button"
+                    onClick={() => setEditProfileModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/20 transition shadow-xs"
+                  >
+                    <Edit3 className="w-3.5 h-3.5 text-amber-300" />
+                    <span>Profil ma’lumotlarini tahrirlash</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -362,19 +444,45 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
         <button
           id="student-tab-events"
           onClick={() => setActiveSection('events')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${getTabClass(activeSection === 'events')}`}
+          className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${getTabClass(activeSection === 'events')}`}
         >
           <Calendar className="w-4 h-4" />
-          <span>Mening Tadbirlarim</span>
+          <span>Tadbirlar & Qatnashish</span>
           <span className={`px-2 py-0.5 rounded-full text-[10px] ${getTabBadgeClass(activeSection === 'events')}`}>
             {myEvents.length}
           </span>
         </button>
 
         <button
+          id="student-tab-rating"
+          onClick={() => setActiveSection('rating')}
+          className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${getTabClass(activeSection === 'rating')}`}
+        >
+          <Flame className="w-4 h-4 text-amber-500" />
+          <span>Top 100 Reytingi</span>
+          <span className={`px-2 py-0.5 rounded-full text-[10px] ${getTabBadgeClass(activeSection === 'rating')}`}>
+            #{rank}
+          </span>
+        </button>
+
+        <button
+          id="student-tab-announcements"
+          onClick={() => setActiveSection('announcements')}
+          className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${getTabClass(activeSection === 'announcements')}`}
+        >
+          <Bell className="w-4 h-4 text-sky-500" />
+          <span>E'lonlar & Yangiliklar</span>
+          {allAnnouncements && allAnnouncements.length > 0 && (
+            <span className={`px-2 py-0.5 rounded-full text-[10px] ${getTabBadgeClass(activeSection === 'announcements')}`}>
+              {allAnnouncements.length}
+            </span>
+          )}
+        </button>
+
+        <button
           id="student-tab-recommendation"
           onClick={() => setActiveSection('recommendation')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${getTabClass(activeSection === 'recommendation')}`}
+          className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${getTabClass(activeSection === 'recommendation')}`}
         >
           <BookOpen className="w-4 h-4" />
           <span>Ilmiy Rahbar Tavsiyasi</span>
@@ -667,81 +775,397 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
         </div>
       )}
 
-      {/* SECTION D: MY REGISTERED EVENTS */}
+      {/* SECTION D: MY REGISTERED EVENTS & OPEN EVENTS */}
       {activeSection === 'events' && (
+        <div className="space-y-6">
+          {/* Registered Events */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className={`text-base font-bold ${titleTextClass} flex items-center gap-2`}>
+                  <Calendar className="w-4 h-4 text-sky-600" />
+                  Mening Qatnashayotgan Tadbirlarim
+                </h2>
+                <p className={`text-xs ${subTextClass}`}>
+                  Siz ro‘yxatdan o‘tgan institut tadbirlari va xakatonlari
+                </p>
+              </div>
+            </div>
+
+            {myEvents.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {myEvents.map((ev) => (
+                  <div
+                    key={ev.id}
+                    className={`${cardBgClass} rounded-2xl border p-4 hover:shadow-xs transition flex flex-col justify-between gap-3`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 border border-emerald-500/30 flex items-center gap-1">
+                          <Check className="w-3 h-3" />
+                          Ro‘yxatdan o‘tilgan
+                        </span>
+                        <span className={`text-[11px] font-medium ${subTextClass}`}>
+                          {ev.date} • {ev.time}
+                        </span>
+                      </div>
+                      <h4 className={`text-sm font-extrabold ${titleTextClass} mt-2`}>
+                        {ev.title}
+                      </h4>
+                      <p className={`text-xs ${subTextClass} mt-1`}>
+                        📍 Manzil: {ev.location}
+                      </p>
+                      <p className={`text-[11px] ${subTextClass} mt-0.5`}>
+                        Mas’ul: <strong className={titleTextClass}>{ev.responsiblePerson}</strong>
+                      </p>
+                    </div>
+
+                    <div className={`pt-2 border-t flex items-center justify-between text-xs ${isDark ? 'border-[#2a364d]' : isSepia ? 'border-[#e8e0d5]' : 'border-slate-100'}`}>
+                      <button
+                        type="button"
+                        onClick={() => onNavigateTab('events')}
+                        className="text-sky-500 font-bold hover:underline"
+                      >
+                        Batafsil ma’lumot
+                      </button>
+                      {onUnregisterForEvent && (
+                        <button
+                          type="button"
+                          onClick={() => onUnregisterForEvent(ev.id, student.id)}
+                          className="px-2.5 py-1 text-[11px] font-bold rounded-lg text-rose-600 hover:bg-rose-500/10 transition"
+                        >
+                          Bekor qilish
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className={`${cardBgClass} rounded-2xl border border-dashed p-6 text-center space-y-2`}>
+                <p className={`text-xs ${subTextClass}`}>Siz hali biron tadbirga ro‘yxatdan o‘tmadingiz. Quyidagi ochiq tadbirlardan birini tanlang!</p>
+              </div>
+            )}
+          </div>
+
+          {/* Open Events to Register */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className={`text-sm font-bold ${titleTextClass} flex items-center gap-2`}>
+                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  Barcha Ochiq Tadbirlar va Tanlovlar
+                </h3>
+                <p className={`text-xs ${subTextClass}`}>
+                  Ro‘yxatdan o‘tib, startap loyihangiz bilan qatnashing yoki yangi sertifikat yuting
+                </p>
+              </div>
+              <button
+                onClick={() => onNavigateTab('events')}
+                className="text-xs font-bold text-sky-600 hover:underline flex items-center gap-1"
+              >
+                <span>Barchasini ko‘rish</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+              {allEvents.map((ev) => {
+                const isRegistered = ev.registeredStudentIds?.includes(student.id);
+                return (
+                  <div
+                    key={ev.id}
+                    className={`${cardBgClass} rounded-2xl border p-4.5 hover:shadow-sm transition flex flex-col justify-between gap-3`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
+                          ev.type === 'xakaton' 
+                            ? 'bg-purple-500/15 text-purple-600'
+                            : ev.type === 'tanlov'
+                            ? 'bg-amber-500/15 text-amber-600'
+                            : 'bg-sky-500/15 text-sky-600'
+                        }`}>
+                          {ev.type}
+                        </span>
+                        <span className={`text-[11px] font-medium ${subTextClass}`}>
+                          {ev.date}
+                        </span>
+                      </div>
+
+                      <h4 className={`text-sm font-extrabold ${titleTextClass} mt-2`}>
+                        {ev.title}
+                      </h4>
+                      <p className={`text-xs ${subTextClass} mt-1 line-clamp-2`}>
+                        {ev.description}
+                      </p>
+                      <div className={`mt-2 text-[11px] ${subTextClass}`}>
+                        📍 {ev.location} • Mas’ul: <strong className={titleTextClass}>{ev.responsiblePerson}</strong>
+                      </div>
+                    </div>
+
+                    <div className={`pt-3 border-t flex items-center justify-between text-xs ${isDark ? 'border-[#2a364d]' : isSepia ? 'border-[#e8e0d5]' : 'border-slate-100'}`}>
+                      <span className={`text-[11px] ${subTextClass}`}>
+                        Ishtirokchilar: <strong className={titleTextClass}>{ev.registeredStudentIds?.length || 0} nafar</strong>
+                      </span>
+
+                      {isRegistered ? (
+                        <span className="px-3 py-1.5 rounded-lg bg-emerald-500/15 text-emerald-600 text-xs font-bold flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          Ro‘yxatdan o‘tgansiz
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedEventForReg(ev);
+                            setRegisterEventModalOpen(true);
+                          }}
+                          className="px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs transition shadow-xs flex items-center gap-1"
+                        >
+                          <Calendar className="w-3.5 h-3.5" />
+                          <span>Ro‘yxatdan o‘tish</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SECTION E: TOP 100 RATING LEADERBOARD */}
+      {activeSection === 'rating' && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h2 className={`text-base font-bold ${titleTextClass} flex items-center gap-2`}>
-                <Calendar className="w-4 h-4 text-sky-600" />
-                Mening Qatnashayotgan Tadbirlarim
+                <Flame className="w-4 h-4 text-amber-500" />
+                TKTI Yangiyer Filiali Top 100 Iqtidorli Talabalar Reytingi
               </h2>
               <p className={`text-xs ${subTextClass}`}>
-                Siz ro‘yxatdan o‘tgan institut konferensiyalari, olimpiadalari va tanlovlari
+                Talabalarning ilmiy maqolalari, startaplari, GPA ko‘rsatkichi va olimpiada yutuqlari bo‘yicha umumiy reytingi
               </p>
             </div>
 
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={top100Search}
+                  onChange={(e) => setTop100Search(e.target.value)}
+                  placeholder="Ism yoki ID bo‘yicha qidiruv..."
+                  className={`pl-8 pr-3 py-1.5 rounded-lg border text-xs w-48 sm:w-56 focus:outline-none focus:border-sky-500 ${
+                    isDark ? 'bg-[#151c28] border-[#2a364d] text-white' : 'bg-white border-slate-200 text-slate-800'
+                  }`}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Current Student's Rank Alert Card */}
+          <div className={`p-4 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs ${
+            isDark ? 'bg-amber-500/10 border-amber-500/30 text-amber-300' : isSepia ? 'bg-amber-100/60 border-amber-300 text-amber-900' : 'bg-amber-50 border-amber-200 text-amber-900'
+          }`}>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 font-black text-base flex items-center justify-center shadow-xs shrink-0">
+                #{rank}
+              </div>
+              <div>
+                <h4 className="font-extrabold text-sm">Sizning joriy o‘rningiz: #{rank}-o‘rin</h4>
+                <p className="text-xs opacity-90">
+                  {student.fullName} • To‘plangan jami ball: <strong>{student.totalPoints} ball</strong> (GPA: {student.gpa.toFixed(2)})
+                </p>
+              </div>
+            </div>
             <button
-              onClick={() => onNavigateTab('events')}
-              className="flex items-center gap-1 px-3 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold transition shadow-xs"
+              onClick={() => setNewAchievementModalOpen(true)}
+              className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs transition shadow-xs shrink-0"
             >
-              <span>Barcha tadbirlar</span>
-              <ChevronRight className="w-4 h-4" />
+              Ballarni oshirish (+ Yutuq kiritish)
             </button>
           </div>
 
+          {/* Ranking Table / List */}
+          <div className={`${cardBgClass} rounded-2xl border overflow-hidden`}>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className={`border-b ${isDark ? 'border-[#2a364d] bg-[#141b27] text-slate-400' : isSepia ? 'border-[#e8e0d5] bg-[#f8f2e7] text-[#715c48]' : 'border-slate-200 bg-slate-50 text-slate-500'}`}>
+                    <th className="py-3 px-4 font-bold text-center w-16">O‘rin</th>
+                    <th className="py-3 px-4 font-bold">Talaba</th>
+                    <th className="py-3 px-4 font-bold">Yo‘nalish / Guruh</th>
+                    <th className="py-3 px-4 font-bold text-center">GPA</th>
+                    <th className="py-3 px-4 font-bold text-center">Yutuqlar</th>
+                    <th className="py-3 px-4 font-bold text-right">Jami Ball</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {allStudents
+                    .slice()
+                    .sort((a, b) => b.totalPoints - a.totalPoints)
+                    .filter((s) => {
+                      if (!top100Search) return true;
+                      const q = top100Search.toLowerCase();
+                      return (
+                        s.fullName.toLowerCase().includes(q) ||
+                        s.studentIdNumber?.toLowerCase().includes(q) ||
+                        s.direction?.toLowerCase().includes(q)
+                      );
+                    })
+                    .map((st, idx) => {
+                      const isMe = st.id === student.id;
+                      const pos = idx + 1;
+                      return (
+                        <tr
+                          key={st.id}
+                          className={`transition ${
+                            isMe
+                              ? isDark
+                                ? 'bg-amber-500/15 font-semibold text-amber-200'
+                                : 'bg-amber-50/80 font-semibold text-amber-950'
+                              : isDark
+                              ? 'hover:bg-slate-800/40 text-slate-200'
+                              : 'hover:bg-slate-50 text-slate-800'
+                          }`}
+                        >
+                          <td className="py-3 px-4 text-center">
+                            {pos === 1 ? (
+                              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-400 text-slate-950 font-black text-xs shadow-xs">
+                                🥇 1
+                              </span>
+                            ) : pos === 2 ? (
+                              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-300 text-slate-950 font-black text-xs shadow-xs">
+                                🥈 2
+                              </span>
+                            ) : pos === 3 ? (
+                              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-600 text-white font-black text-xs shadow-xs">
+                                🥉 3
+                              </span>
+                            ) : (
+                              <span className="font-bold text-slate-500">#{pos}</span>
+                            )}
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="flex items-center gap-2.5">
+                              <UserAvatar
+                                src={st.avatarUrl}
+                                name={st.fullName}
+                                size="sm"
+                                className="rounded-lg shrink-0"
+                              />
+                              <div>
+                                <div className="font-bold flex items-center gap-1.5">
+                                  <span>{st.fullName}</span>
+                                  {isMe && (
+                                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500 text-slate-950 font-black uppercase">
+                                      Siz
+                                    </span>
+                                  )}
+                                </div>
+                                <div className={`text-[11px] ${subTextClass}`}>
+                                  {st.studentIdNumber} • Rahbar: {st.scientificSupervisor}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="font-medium truncate max-w-[200px]">{st.direction}</div>
+                            <div className={`text-[11px] ${subTextClass}`}>{st.course}-kurs, {st.group}</div>
+                          </td>
+                          <td className="py-3 px-4 text-center font-bold text-emerald-600">
+                            {st.gpa?.toFixed(2) || '4.50'}
+                          </td>
+                          <td className="py-3 px-4 text-center font-semibold">
+                            {st.achievements?.length || 0} ta
+                          </td>
+                          <td className="py-3 px-4 text-right">
+                            <span className="font-black text-amber-500 text-sm">
+                              {st.totalPoints}
+                            </span>
+                            <span className="text-[10px] text-slate-400 ml-1">ball</span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SECTION F: ANNOUNCEMENTS & NEWS */}
+      {activeSection === 'announcements' && (
+        <div className="space-y-4">
+          <div>
+            <h2 className={`text-base font-bold ${titleTextClass} flex items-center gap-2`}>
+              <Bell className="w-4 h-4 text-sky-500" />
+              Institut Ilmiy E'lonlari va Yangiliklari
+            </h2>
+            <p className={`text-xs ${subTextClass}`}>
+              Grantlar, xakatonlar, olimpiada qabullari va ilmiy maqolalar chop etish bo‘yicha e’lonlar
+            </p>
+          </div>
+
           <div className="space-y-3">
-            {myEvents.length > 0 ? (
-              myEvents.map((ev) => (
+            {allAnnouncements && allAnnouncements.length > 0 ? (
+              allAnnouncements.map((ann) => (
                 <div
-                  key={ev.id}
-                  className={`${cardBgClass} rounded-2xl border p-4.5 hover:shadow-xs transition flex flex-col sm:flex-row sm:items-center justify-between gap-4`}
+                  key={ann.id}
+                  className={`${cardBgClass} rounded-2xl border p-5 hover:shadow-xs transition space-y-3`}
                 >
-                  <div>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 border border-emerald-500/30">
-                        ✓ Ro‘yxatdan o‘tilgan
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
+                        ann.priority === 'yuqori' 
+                          ? 'bg-rose-500/15 text-rose-600 border border-rose-500/30'
+                          : 'bg-sky-500/15 text-sky-600'
+                      }`}>
+                        {ann.category}
                       </span>
-                      <span className={`text-xs ${subTextClass}`}>
-                        {ev.date} • {ev.time}
-                      </span>
+                      {ann.priority === 'yuqori' && (
+                        <span className="text-[10px] font-bold text-rose-600 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />
+                          Muhim
+                        </span>
+                      )}
                     </div>
-                    <h4 className={`text-sm font-extrabold ${titleTextClass} mt-1`}>
-                      {ev.title}
+                    <span className={`text-xs font-semibold ${subTextClass}`}>
+                      {ann.date}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h4 className={`text-sm font-extrabold ${titleTextClass}`}>
+                      {ann.title}
                     </h4>
-                    <p className={`text-xs ${subTextClass} mt-0.5`}>
-                      📍 Manzil: {ev.location} • Mas’ul: {ev.responsiblePerson}
+                    <p className={`text-xs ${subTextClass} mt-1 leading-relaxed`}>
+                      {ann.content}
                     </p>
                   </div>
 
-                  <button
-                    onClick={() => onNavigateTab('events')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition self-start sm:self-center ${isDark ? 'bg-[#242e42] text-slate-200 hover:bg-[#2e3b54]' : 'bg-slate-100 hover:bg-slate-200 text-slate-800'}`}
-                  >
-                    Tadbir tafsilotlari
-                  </button>
+                  {ann.targetAudience && (
+                    <div className={`pt-2 border-t flex items-center justify-between text-[11px] ${subTextClass} ${isDark ? 'border-[#2a364d]' : isSepia ? 'border-[#e8e0d5]' : 'border-slate-100'}`}>
+                      <span>Kimlar uchun: <strong className={titleTextClass}>{ann.targetAudience}</strong></span>
+                      <span>Muallif: <strong className={titleTextClass}>{ann.author}</strong></span>
+                    </div>
+                  )}
                 </div>
               ))
             ) : (
-              <div className={`${cardBgClass} rounded-2xl border border-dashed p-8 text-center space-y-3`}>
-                <Calendar className={`w-8 h-8 ${subTextClass} mx-auto`} />
-                <h3 className={`text-sm font-bold ${titleTextClass}`}>Hozircha tadbirlarga ro‘yxatdan o‘tilmagan</h3>
-                <p className={`text-xs ${subTextClass} max-w-md mx-auto`}>
-                  Institutda har oy iqtidorli talabalar uchun xakatonlar, startaplar ko‘rigi va xalqaro tanlovlar o‘tkaziladi.
-                </p>
-                <button
-                  onClick={() => onNavigateTab('events')}
-                  className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold rounded-lg transition"
-                >
-                  Ochiq tadbirlarga yozilish
-                </button>
+              <div className={`${cardBgClass} rounded-2xl border border-dashed p-8 text-center`}>
+                <p className={`text-xs ${subTextClass}`}>Hozircha yangi e’lonlar mavjud emas.</p>
               </div>
             )}
           </div>
         </div>
       )}
 
-      {/* SECTION E: SUPERVISOR RECOMMENDATION */}
+      {/* SECTION G: SUPERVISOR RECOMMENDATION */}
       {activeSection === 'recommendation' && (
         <div className={`rounded-2xl border p-6 sm:p-8 space-y-5 shadow-xs transition-colors duration-150 ${
           isDark 
@@ -921,6 +1345,29 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
                 />
               </div>
 
+              <div>
+                <label className="font-bold text-slate-700 block mb-1">Prezentatsiya yoki Biznes-reja fayli (PDF, PPTX)</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="file"
+                    id="project-presentation-file"
+                    accept=".pdf,.pptx,.ppt,.docx,.doc"
+                    onChange={handlePresentationFileChange}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor="project-presentation-file"
+                    className="cursor-pointer px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs border border-slate-300 transition flex items-center gap-1.5"
+                  >
+                    <FolderGit2 className="w-4 h-4 text-sky-600" />
+                    <span>Fayl tanlash</span>
+                  </label>
+                  <span className="text-[11px] text-slate-500 truncate max-w-xs">
+                    {projPresentationName || 'Fayl tanlanmagan'}
+                  </span>
+                </div>
+              </div>
+
               <div className="pt-2 flex items-center justify-end gap-2">
                 <button
                   type="button"
@@ -1064,6 +1511,29 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
                 />
               </div>
 
+              <div>
+                <label className="font-bold text-slate-700 block mb-1">Sertifikat / Maqola skaner nusxasi (PDF, JPG, PNG)</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="file"
+                    id="achievement-doc-file"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={handleDocFileChange}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor="achievement-doc-file"
+                    className="cursor-pointer px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs border border-slate-300 transition flex items-center gap-1.5"
+                  >
+                    <FileCheck className="w-4 h-4 text-amber-600" />
+                    <span>Hujjat yuklash</span>
+                  </label>
+                  <span className="text-[11px] text-slate-500 truncate max-w-xs">
+                    {achDocName || 'Hujjat tanlanmagan'}
+                  </span>
+                </div>
+              </div>
+
               <div className="pt-2 flex items-center justify-end gap-2">
                 <button
                   type="button"
@@ -1082,6 +1552,38 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
             </form>
           </div>
         </div>
+      )}
+
+      {/* 6. MODAL: EDIT STUDENT PROFILE */}
+      {editProfileModalOpen && onUpdateStudentProfile && (
+        <EditStudentModal
+          student={student}
+          isOpen={editProfileModalOpen}
+          onClose={() => setEditProfileModalOpen(false)}
+          onSave={(updated) => {
+            onUpdateStudentProfile(updated);
+            setEditProfileModalOpen(false);
+          }}
+        />
+      )}
+
+      {/* 7. MODAL: REGISTER FOR EVENT */}
+      {registerEventModalOpen && selectedEventForReg && (
+        <RegisterEventModal
+          event={selectedEventForReg}
+          student={student}
+          studentProjects={myProjects}
+          isOpen={registerEventModalOpen}
+          onClose={() => {
+            setRegisterEventModalOpen(false);
+            setSelectedEventForReg(null);
+          }}
+          onRegister={(eventId, studentId, projectId, projectName, note) => {
+            onRegisterForEvent?.(eventId, studentId, projectId, projectName, note);
+            setRegisterEventModalOpen(false);
+            setSelectedEventForReg(null);
+          }}
+        />
       )}
 
     </div>

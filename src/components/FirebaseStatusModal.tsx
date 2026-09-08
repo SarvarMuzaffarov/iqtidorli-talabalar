@@ -162,36 +162,48 @@ export const FirebaseStatusModal: React.FC<FirebaseStatusModalProps> = ({ isOpen
               </button>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-              <div className="bg-slate-800/40 border border-slate-700/60 p-3 rounded-xl text-center">
+            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
+              <div className="bg-slate-800/40 border border-slate-700/60 p-2.5 rounded-xl text-center">
                 <div className="text-base font-extrabold text-white">
                   {status ? status.studentsCount : '...'}
                 </div>
                 <div className="text-[10px] text-slate-400 mt-0.5">👨‍🎓 Talabalar</div>
               </div>
-              <div className="bg-slate-800/40 border border-slate-700/60 p-3 rounded-xl text-center">
+              <div className="bg-slate-800/40 border border-slate-700/60 p-2.5 rounded-xl text-center">
                 <div className="text-base font-extrabold text-white">
                   {status ? status.projectsCount : '...'}
                 </div>
                 <div className="text-[10px] text-slate-400 mt-0.5">💡 Loyihalar</div>
               </div>
-              <div className="bg-slate-800/40 border border-slate-700/60 p-3 rounded-xl text-center">
+              <div className="bg-slate-800/40 border border-slate-700/60 p-2.5 rounded-xl text-center">
                 <div className="text-base font-extrabold text-white">
                   {status ? status.eventsCount : '...'}
                 </div>
                 <div className="text-[10px] text-slate-400 mt-0.5">📅 Tadbirlar</div>
               </div>
-              <div className="bg-slate-800/40 border border-slate-700/60 p-3 rounded-xl text-center">
+              <div className="bg-slate-800/40 border border-slate-700/60 p-2.5 rounded-xl text-center">
                 <div className="text-base font-extrabold text-white">
                   {status ? status.announcementsCount : '...'}
                 </div>
                 <div className="text-[10px] text-slate-400 mt-0.5">📢 E'lonlar</div>
               </div>
-              <div className="bg-slate-800/40 border border-slate-700/60 p-3 rounded-xl text-center">
+              <div className="bg-slate-800/40 border border-slate-700/60 p-2.5 rounded-xl text-center">
                 <div className="text-base font-extrabold text-white">
                   {status ? status.certificatesCount : '...'}
                 </div>
                 <div className="text-[10px] text-slate-400 mt-0.5">📜 Sertifikatlar</div>
+              </div>
+              <div className="bg-slate-800/40 border border-slate-700/60 p-2.5 rounded-xl text-center">
+                <div className="text-base font-extrabold text-white">
+                  {status ? status.teachersCount : '...'}
+                </div>
+                <div className="text-[10px] text-slate-400 mt-0.5">👨‍🏫 Ustozlar</div>
+              </div>
+              <div className="bg-slate-800/40 border border-slate-700/60 p-2.5 rounded-xl text-center col-span-2 sm:col-span-1">
+                <div className="text-base font-extrabold text-white">
+                  {status ? status.usersCount : '...'}
+                </div>
+                <div className="text-[10px] text-slate-400 mt-0.5">👥 Akkountlar</div>
               </div>
             </div>
           </div>

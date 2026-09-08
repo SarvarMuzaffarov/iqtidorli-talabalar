@@ -124,8 +124,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Right Action Controls: Add Student, QR Verify, Role Switcher */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             
-            {/* Quick Add Student Button (for Admin & SuperAdmin) */}
-            {currentRole !== 'student' && onOpenAddStudent && (
+            {/* Quick Add Student Button (ONLY for Admin & SuperAdmin) */}
+            {(currentRole === 'admin' || currentRole === 'super_admin') && onOpenAddStudent && (
               <button
                 onClick={onOpenAddStudent}
                 className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold transition"
@@ -136,8 +136,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
-            {/* Quick Add Teacher Button (for Admin & SuperAdmin) */}
-            {currentRole !== 'student' && onOpenAddTeacher && (
+            {/* Quick Add Teacher Button (ONLY for Admin & SuperAdmin) */}
+            {(currentRole === 'admin' || currentRole === 'super_admin') && onOpenAddTeacher && (
               <button
                 onClick={onOpenAddTeacher}
                 className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition"
@@ -162,19 +162,21 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="xl:hidden">Telegram</span>
             </a>
 
-            {/* Quick QR Code Verify Tool */}
-            <button
-              id="verify-qr-nav-btn"
-              onClick={onOpenVerifyModal}
-              title="Sertifikatni QR-kod orqali tekshirish"
-              className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition shrink-0"
-            >
-              <QrCode className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span className="hidden md:inline">QR Tekshirish</span>
-            </button>
+            {/* Quick QR Code Verify Tool (Hidden for student role) */}
+            {currentRole !== 'student' && (
+              <button
+                id="verify-qr-nav-btn"
+                onClick={onOpenVerifyModal}
+                title="Sertifikatni QR-kod orqali tekshirish"
+                className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition shrink-0"
+              >
+                <QrCode className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="hidden md:inline">QR Tekshirish</span>
+              </button>
+            )}
 
-            {/* Firebase Database Status Modal Button */}
-            {onOpenFirebaseStatus && (
+            {/* Firebase Database Status Modal Button (ONLY for Admin & SuperAdmin) */}
+            {(currentRole === 'super_admin' || currentRole === 'admin') && onOpenFirebaseStatus && (
               <button
                 id="firebase-status-nav-btn"
                 onClick={onOpenFirebaseStatus}
@@ -190,46 +192,41 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Eye-Care Visual Comfort Toggle */}
             <EyeCareControls variant="button" />
 
-            {/* Role Switcher Pill */}
-            <div className="flex items-center bg-slate-800/90 p-0.5 sm:p-1 rounded-xl border border-slate-700 shrink-0">
-              <span className="text-[10px] uppercase font-bold text-slate-400 px-1.5 hidden xl:inline">
-                Rol:
-              </span>
-              <select
-                id="role-selector"
-                value={currentRole}
-                onChange={(e) => onRoleChange(e.target.value as UserRole)}
-                aria-label="Tizimdagi rol"
-                className="bg-transparent text-xs font-semibold text-amber-300 focus:outline-none cursor-pointer pr-1 py-0.5 max-w-[85px] sm:max-w-[140px] truncate"
-              >
-                <option value="super_admin" className="bg-slate-900 text-white">Super Admin</option>
-                <option value="admin" className="bg-slate-900 text-white">Admin</option>
-                <option value="faculty" className="bg-slate-900 text-white">O‘qituvchi</option>
-                <option value="student" className="bg-slate-900 text-white">Talaba</option>
-              </select>
-            </div>
-
-            {/* If Student role active, pick active student */}
-            {currentRole === 'student' && onActiveStudentChange && safeStudents.length > 0 && (
-              <div className="hidden md:flex items-center shrink-0">
+            {/* Role Switcher Pill (ONLY for Admin & SuperAdmin) */}
+            {(currentRole === 'super_admin' || currentRole === 'admin') && (
+              <div className="flex items-center bg-slate-800/90 p-0.5 sm:p-1 rounded-xl border border-slate-700 shrink-0">
+                <span className="text-[10px] uppercase font-bold text-slate-400 px-1.5 hidden xl:inline">
+                  Rol:
+                </span>
                 <select
-                  id="active-student-selector"
-                  value={activeStudentId}
-                  onChange={(e) => onActiveStudentChange(e.target.value)}
-                  aria-label="Talabani tanlash"
-                  className="bg-slate-800 text-xs text-sky-300 border border-sky-500/40 rounded-lg px-2 py-1.5 focus:outline-none max-w-[120px] truncate"
+                  id="role-selector"
+                  value={currentRole}
+                  onChange={(e) => onRoleChange(e.target.value as UserRole)}
+                  aria-label="Tizimdagi rol"
+                  className="bg-transparent text-xs font-semibold text-amber-300 focus:outline-none cursor-pointer pr-1 py-0.5 max-w-[85px] sm:max-w-[140px] truncate"
                 >
-                  {safeStudents.map((s) => (
-                    <option key={s.id} value={s.id} className="bg-slate-900 text-white">
-                      {s.fullName.split(' ')[0]} {s.fullName.split(' ')[1] || ''}
-                    </option>
-                  ))}
+                  <option value="super_admin" className="bg-slate-900 text-white">Super Admin</option>
+                  <option value="admin" className="bg-slate-900 text-white">Admin</option>
+                  <option value="faculty" className="bg-slate-900 text-white">O‘qituvchi</option>
+                  <option value="student" className="bg-slate-900 text-white">Talaba</option>
                 </select>
               </div>
             )}
 
-            {/* Reset Data to original state if handler passed */}
-            {onResetData && (
+            {/* Role badges for Student and Teacher */}
+            {currentRole === 'student' && (
+              <span className="px-2.5 py-1 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/30 text-[11px] font-bold shrink-0">
+                Talaba Kabineti
+              </span>
+            )}
+            {(currentRole === 'faculty' || currentRole === 'teacher') && (
+              <span className="px-2.5 py-1 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[11px] font-bold shrink-0">
+                O‘qituvchi Kabineti
+              </span>
+            )}
+
+            {/* Reset Data to original state if handler passed (ONLY for super_admin) */}
+            {currentRole === 'super_admin' && onResetData && (
               <button
                 id="reset-data-btn"
                 onClick={onResetData}

@@ -19,7 +19,7 @@ import {
   HeartHandshake,
   Shield
 } from 'lucide-react';
-import { UserRole, Student } from '../types';
+import { UserRole, Student, UserAccount, Teacher } from '../types';
 import { FILIAL_YONALISHLARI, INSTITUT_ILMIY_RAHBARLARI } from '../constants/filialData';
 import { TktiyfLogo } from './TktiyfLogo';
 import { useEyeCare } from '../context/EyeCareContext';
@@ -30,15 +30,19 @@ interface AuthModalProps {
   onClose: () => void;
   initialMode?: 'login' | 'register';
   students: Student[];
+  accounts?: UserAccount[];
+  teachers?: Teacher[];
   onLogin: (role: UserRole, studentId?: string) => void;
-  onRegisterStudent: (newStudent: Student) => void;
+  onRegisterStudent: (newStudent: Student, newAccount?: UserAccount) => void;
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,
   onClose,
   initialMode = 'login',
-  students,
+  students = [],
+  accounts = [],
+  teachers = [],
   onLogin,
   onRegisterStudent,
 }) => {
@@ -56,7 +60,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   // Login Form States
   const [loginIdentifier, setLoginIdentifier] = useState('ali.aliyev@tkti.uz');
   const [loginPassword, setLoginPassword] = useState('password123');
-  const [selectedRole, setSelectedRole] = useState<UserRole>('super_admin');
+  const [selectedRole, setSelectedRole] = useState<UserRole>('student');
 
   // Register Form States (filial yo'nalishlari va ilmiy rahbar)
   const [regFullName, setRegFullName] = useState('');
@@ -76,20 +80,49 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     e.preventDefault();
     setErrorMsg('');
 
+    const query = loginIdentifier.trim().toLowerCase();
+
     if (selectedRole === 'student') {
       const safeStudents = Array.isArray(students) ? students : [];
+      // Search matching student
       const matched = safeStudents.find(
         (s) => 
-          s.email.toLowerCase() === loginIdentifier.toLowerCase() ||
-          s.studentIdNumber.toLowerCase() === loginIdentifier.toLowerCase() ||
-          s.fullName.toLowerCase().includes(loginIdentifier.toLowerCase())
-      ) || safeStudents[0];
+          s.email?.toLowerCase() === query ||
+          s.studentIdNumber?.toLowerCase() === query ||
+          s.fullName.toLowerCase().includes(query)
+      );
 
-      onLogin('student', matched?.id || 'stud-1');
+      if (matched) {
+        onLogin('student', matched.id);
+        onClose();
+        return;
+      }
+
+      // Check in accounts
+      const matchedAccount = accounts.find(
+        (acc) => acc.role === 'student' && (acc.email?.toLowerCase() === query || acc.fullName.toLowerCase().includes(query))
+      );
+      if (matchedAccount && matchedAccount.studentId) {
+        onLogin('student', matchedAccount.studentId);
+        onClose();
+        return;
+      }
+
+      if (safeStudents.length > 0) {
+        onLogin('student', safeStudents[0].id);
+        onClose();
+        return;
+      }
+
+      onLogin('student');
+      onClose();
+    } else if (selectedRole === 'teacher' || selectedRole === 'faculty') {
+      onLogin('faculty');
+      onClose();
     } else {
       onLogin(selectedRole);
+      onClose();
     }
-    onClose();
   };
 
   const handleRegisterSubmit = (e: React.FormEvent) => {
@@ -112,14 +145,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       id: newId,
       studentIdNumber: generatedStudentId,
       fullName: regFullName.trim(),
-      faculty: 'TKTI Filiali',
+      faculty: 'TKTI Yangiyer Filiali',
       direction: regDirection,
       course: Number(regCourse) || 1,
       group: regGroup.trim() || '24-01 Guruh',
       phone: regPhone.trim() || '+998 90 000 00 00',
       email: regEmail.trim() || `${generatedStudentId.toLowerCase()}@tkti.uz`,
-      avatarUrl: `https://images.unsplash.com/photo-${1534528741775 + Math.floor(Math.random() * 1000)}?auto=format&fit=crop&q=80&w=400`,
-      telegramUsername: `@${regFullName.split(' ')[0].toLowerCase()}_tkti`,
+      avatarUrl: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400`,
+      telegramUsername: `${regFullName.split(' ')[0].toLowerCase()}_tkti`,
       interests: regInterests.split(',').map((s) => s.trim()).filter(Boolean),
       competencies: [regDirection, "Ilmiy tadqiqot", "Startap loyihalar"],
       gpa: 4.8,
@@ -144,13 +177,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       certificateIds: []
     };
 
-    onRegisterStudent(newStudent);
-    onLogin('student', newStudent.id);
-    onClose();
-  };
+    const newAccount: UserAccount = {
+      id: `acc-${Date.now()}`,
+      fullName: regFullName.trim(),
+      email: regEmail.trim() || `${generatedStudentId.toLowerCase()}@tkti.uz`,
+      phone: regPhone.trim() || '+998 90 000 00 00',
+      role: 'student',
+      department: `${regDirection} (${regGroup})`,
+      title: `Talaba, ${regCourse}-kurs`,
+      status: 'active',
+      createdAt: new Date().toISOString(),
+      studentId: newId,
+    };
 
-  const handleQuickDemoLogin = (role: UserRole, studentId?: string) => {
-    onLogin(role, studentId);
+    onRegisterStudent(newStudent, newAccount);
+    onLogin('student', newStudent.id);
     onClose();
   };
 
@@ -315,105 +356,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
           {mode === 'login' ? (
             <div>
-              {/* Quick Demo Login Presets */}
-              <div className="mb-5">
-                <div className="flex items-center justify-between mb-2">
-                  <p className={`text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${textMutedClass}`}>
-                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                    <span>Tezkor kirish (Demo rollar):</span>
-                  </p>
-                  <span className="text-[10px] text-slate-400">1 bosishda kirish</span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  {/* Super Admin */}
-                  <button
-                    type="button"
-                    onClick={() => handleQuickDemoLogin('super_admin')}
-                    className={`p-2.5 rounded-xl border text-left transition group ${
-                      isDark
-                        ? 'bg-[#121824] hover:bg-[#162030] border-[#2a364d] hover:border-amber-500/50'
-                        : isSepia
-                        ? 'bg-[#faf6ef] hover:bg-[#f4ede2] border-[#e2d8ca] hover:border-amber-600/50'
-                        : 'bg-amber-50/50 hover:bg-amber-50 border-amber-200/80 hover:border-amber-300'
-                    }`}
-                  >
-                    <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-300 text-xs font-bold mb-0.5">
-                      <ShieldCheck className="w-3.5 h-3.5" />
-                      <span>Super Admin</span>
-                    </div>
-                    <div className={`text-[10px] truncate ${textMutedClass}`}>Rektorat & Boshqaruv</div>
-                  </button>
-
-                  {/* Administrator */}
-                  <button
-                    type="button"
-                    onClick={() => handleQuickDemoLogin('admin')}
-                    className={`p-2.5 rounded-xl border text-left transition group ${
-                      isDark
-                        ? 'bg-[#121824] hover:bg-[#162030] border-[#2a364d] hover:border-sky-500/50'
-                        : isSepia
-                        ? 'bg-[#faf6ef] hover:bg-[#f4ede2] border-[#e2d8ca] hover:border-sky-600/50'
-                        : 'bg-sky-50/50 hover:bg-sky-50 border-sky-200/80 hover:border-sky-300'
-                    }`}
-                  >
-                    <div className="flex items-center gap-1.5 text-sky-700 dark:text-sky-300 text-xs font-bold mb-0.5">
-                      <Building2 className="w-3.5 h-3.5" />
-                      <span>Administrator</span>
-                    </div>
-                    <div className={`text-[10px] truncate ${textMutedClass}`}>Iqtidorlilar bo‘limi</div>
-                  </button>
-
-                  {/* O'qituvchi */}
-                  <button
-                    type="button"
-                    onClick={() => handleQuickDemoLogin('teacher')}
-                    className={`p-2.5 rounded-xl border text-left transition group ${
-                      isDark
-                        ? 'bg-[#121824] hover:bg-[#162030] border-[#2a364d] hover:border-purple-500/50'
-                        : isSepia
-                        ? 'bg-[#faf6ef] hover:bg-[#f4ede2] border-[#e2d8ca] hover:border-purple-600/50'
-                        : 'bg-purple-50/50 hover:bg-purple-50 border-purple-200/80 hover:border-purple-300'
-                    }`}
-                  >
-                    <div className="flex items-center gap-1.5 text-purple-700 dark:text-purple-300 text-xs font-bold mb-0.5">
-                      <BookOpen className="w-3.5 h-3.5" />
-                      <span>O‘qituvchi</span>
-                    </div>
-                    <div className={`text-[10px] truncate ${textMutedClass}`}>Ilmiy rahbar kabineti</div>
-                  </button>
-
-                  {/* Iqtidorli Talaba */}
-                  <button
-                    type="button"
-                    onClick={() => handleQuickDemoLogin('student', students[0]?.id)}
-                    className={`p-2.5 rounded-xl border text-left transition group ${
-                      isDark
-                        ? 'bg-[#121824] hover:bg-[#162030] border-[#2a364d] hover:border-emerald-500/50'
-                        : isSepia
-                        ? 'bg-[#faf6ef] hover:bg-[#f4ede2] border-[#e2d8ca] hover:border-emerald-600/50'
-                        : 'bg-emerald-50/50 hover:bg-emerald-50 border-emerald-200/80 hover:border-emerald-300'
-                    }`}
-                  >
-                    <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-300 text-xs font-bold mb-0.5">
-                      <GraduationCap className="w-3.5 h-3.5" />
-                      <span>Iqtidorli Talaba</span>
-                    </div>
-                    <div className={`text-[10px] truncate ${textMutedClass}`}>
-                      {students[0]?.fullName?.split(' ')[0] || 'Aliyev Ali'}
-                    </div>
-                  </button>
-                </div>
-              </div>
-
-              {/* Divider */}
-              <div className="relative flex items-center justify-center my-5">
-                <div className={`border-t w-full ${isDark ? 'border-[#242e42]' : isSepia ? 'border-[#e8ded1]' : 'border-slate-200'}`} />
-                <span className={`px-3 text-[11px] font-medium absolute ${isDark ? 'bg-[#1a2232] text-slate-400' : isSepia ? 'bg-[#fffdf9] text-[#796e65]' : 'bg-white text-slate-500'}`}>
-                  yoki hisob orqali kirish
-                </span>
-              </div>
-
               {/* Standard Login Form */}
               <form onSubmit={handleLoginSubmit} className="space-y-3.5">
                 <div>

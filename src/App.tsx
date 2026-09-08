@@ -338,8 +338,22 @@ export default function App() {
     saveEventToFirestore(newEvent);
   };
 
+  // Handler: Update Student Profile (by student or admin)
+  const handleUpdateStudentProfile = (updatedStudent: Student) => {
+    setStudents((prev) => 
+      prev.map((s) => s.id === updatedStudent.id ? updatedStudent : s)
+    );
+    saveStudentToFirestore(updatedStudent);
+  };
+
   // Handler: Register for Event
-  const handleRegisterForEvent = (eventId: string, studentId: string) => {
+  const handleRegisterForEvent = (
+    eventId: string, 
+    studentId: string, 
+    _projectId?: string, 
+    _projectName?: string, 
+    _topicOrNote?: string
+  ) => {
     setEvents((prev) => 
       prev.map((ev) => {
         if (ev.id !== eventId) return ev;
@@ -636,12 +650,17 @@ export default function App() {
             allProjects={projects}
             allEvents={events}
             allCertificates={certificates}
+            allStudents={students}
+            allAnnouncements={announcements}
             onSelectProject={(project) => setSelectedProject(project)}
             onSelectCertificate={(cert) => setSelectedCertificate(cert)}
             onOpenVerifyModal={(num) => handleOpenVerifyWithNumber(num)}
             onNavigateTab={(tab) => setActiveTab(tab)}
             onAddProject={handleAddProject}
             onSubmitAchievement={handleSubmitAchievementFromStudent}
+            onRegisterForEvent={handleRegisterForEvent}
+            onUnregisterForEvent={handleUnregisterForEvent}
+            onUpdateStudentProfile={handleUpdateStudentProfile}
             rank={activeStudentRank}
           />
         )}

@@ -8,7 +8,7 @@ import {
   onSnapshot,
   Unsubscribe
 } from 'firebase/firestore';
-import { db } from './firebase';
+import { db, auth } from './firebase';
 import firebaseConfigJson from '../../firebase-applet-config.json';
 import { 
   Student, 
@@ -30,7 +30,7 @@ export const COLLECTIONS = {
   TEACHERS: 'teachers',
   USERS: 'users',
   SYSTEM: 'system',
-};
+} as const;
 
 export const FIREBASE_INFO = {
   projectId: firebaseConfigJson.projectId,
@@ -38,81 +38,114 @@ export const FIREBASE_INFO = {
   consoleUrl: `https://console.firebase.google.com/project/${firebaseConfigJson.projectId}/firestore/databases/${firebaseConfigJson.firestoreDatabaseId || '(default)'}/data`
 };
 
+export enum OperationType {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  LIST = 'list',
+  GET = 'get',
+  WRITE = 'write',
+}
+
+export interface FirestoreErrorInfo {
+  error: string;
+  operationType: OperationType;
+  path: string | null;
+  authInfo: {
+    userId?: string | null;
+    email?: string | null;
+    emailVerified?: boolean | null;
+    isAnonymous?: boolean | null;
+    tenantId?: string | null;
+    providerInfo?: {
+      providerId?: string | null;
+      email?: string | null;
+    }[];
+  };
+}
+
+export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null): FirestoreErrorInfo {
+  const errInfo: FirestoreErrorInfo = {
+    error: error instanceof Error ? error.message : String(error),
+    authInfo: {
+      userId: auth?.currentUser?.uid || null,
+      email: auth?.currentUser?.email || null,
+      emailVerified: auth?.currentUser?.emailVerified || null,
+      isAnonymous: auth?.currentUser?.isAnonymous || null,
+      tenantId: auth?.currentUser?.tenantId || null,
+      providerInfo: auth?.currentUser?.providerData?.map(provider => ({
+        providerId: provider.providerId,
+        email: provider.email,
+      })) || []
+    },
+    operationType,
+    path
+  };
+  console.error('Firestore Error Log: ', JSON.stringify(errInfo));
+  return errInfo;
+}
+
 // Real-time snapshot subscribers
 export function subscribeToStudents(callback: (students: Student[]) => void): Unsubscribe {
   return onSnapshot(collection(db, COLLECTIONS.STUDENTS), (snapshot) => {
     const data = snapshot.docs.map((d) => d.data() as Student);
-    if (data.length > 0) {
-      callback(data);
-    }
+    callback(data);
   }, (err) => {
-    console.warn('Students snapshot listener warning:', err);
+    handleFirestoreError(err, OperationType.LIST, COLLECTIONS.STUDENTS);
   });
 }
 
 export function subscribeToProjects(callback: (projects: Project[]) => void): Unsubscribe {
   return onSnapshot(collection(db, COLLECTIONS.PROJECTS), (snapshot) => {
     const data = snapshot.docs.map((d) => d.data() as Project);
-    if (data.length > 0) {
-      callback(data);
-    }
+    callback(data);
   }, (err) => {
-    console.warn('Projects snapshot listener warning:', err);
+    handleFirestoreError(err, OperationType.LIST, COLLECTIONS.PROJECTS);
   });
 }
 
 export function subscribeToEvents(callback: (events: UniversityEvent[]) => void): Unsubscribe {
   return onSnapshot(collection(db, COLLECTIONS.EVENTS), (snapshot) => {
     const data = snapshot.docs.map((d) => d.data() as UniversityEvent);
-    if (data.length > 0) {
-      callback(data);
-    }
+    callback(data);
   }, (err) => {
-    console.warn('Events snapshot listener warning:', err);
+    handleFirestoreError(err, OperationType.LIST, COLLECTIONS.EVENTS);
   });
 }
 
 export function subscribeToAnnouncements(callback: (announcements: Announcement[]) => void): Unsubscribe {
   return onSnapshot(collection(db, COLLECTIONS.ANNOUNCEMENTS), (snapshot) => {
     const data = snapshot.docs.map((d) => d.data() as Announcement);
-    if (data.length > 0) {
-      callback(data);
-    }
+    callback(data);
   }, (err) => {
-    console.warn('Announcements snapshot listener warning:', err);
+    handleFirestoreError(err, OperationType.LIST, COLLECTIONS.ANNOUNCEMENTS);
   });
 }
 
 export function subscribeToCertificates(callback: (certificates: Certificate[]) => void): Unsubscribe {
   return onSnapshot(collection(db, COLLECTIONS.CERTIFICATES), (snapshot) => {
     const data = snapshot.docs.map((d) => d.data() as Certificate);
-    if (data.length > 0) {
-      callback(data);
-    }
+    callback(data);
   }, (err) => {
-    console.warn('Certificates snapshot listener warning:', err);
+    handleFirestoreError(err, OperationType.LIST, COLLECTIONS.CERTIFICATES);
   });
 }
 
 export function subscribeToTeachers(callback: (teachers: Teacher[]) => void): Unsubscribe {
   return onSnapshot(collection(db, COLLECTIONS.TEACHERS), (snapshot) => {
     const data = snapshot.docs.map((d) => d.data() as Teacher);
-    if (data.length > 0) {
-      callback(data);
-    }
+    callback(data);
   }, (err) => {
-    console.warn('Teachers snapshot listener warning:', err);
+    handleFirestoreError(err, OperationType.LIST, COLLECTIONS.TEACHERS);
   });
 }
 
 export function subscribeToAccounts(callback: (accounts: UserAccount[]) => void): Unsubscribe {
   return onSnapshot(collection(db, COLLECTIONS.USERS), (snapshot) => {
     const data = snapshot.docs.map((d) => d.data() as UserAccount);
-    if (data.length > 0) {
-      callback(data);
-    }
+    callback(data);
   }, (err) => {
-    console.warn('Accounts snapshot listener warning:', err);
+    handleFirestoreError(err, OperationType.LIST, COLLECTIONS.USERS);
   });
 }
 
@@ -191,14 +224,26 @@ export async function syncInitialDataToFirestore(
       const certificates = certificatesSnap.docs.map(d => d.data() as Certificate);
       
       const teachersSnap = await getDocs(collection(db, COLLECTIONS.TEACHERS));
-      const teachers = teachersSnap.empty && initialTeachers 
-        ? initialTeachers 
-        : teachersSnap.docs.map(d => d.data() as Teacher);
+      let teachers: Teacher[] = [];
+      if (teachersSnap.empty && initialTeachers && initialTeachers.length > 0) {
+        teachers = initialTeachers;
+        const tBatch = writeBatch(db);
+        initialTeachers.forEach(t => tBatch.set(doc(db, COLLECTIONS.TEACHERS, t.id), t));
+        await tBatch.commit().catch(e => console.warn('Could not seed missing teachers:', e));
+      } else {
+        teachers = teachersSnap.docs.map(d => d.data() as Teacher);
+      }
 
       const accountsSnap = await getDocs(collection(db, COLLECTIONS.USERS));
-      const accounts = accountsSnap.empty && initialAccounts
-        ? initialAccounts
-        : accountsSnap.docs.map(d => d.data() as UserAccount);
+      let accounts: UserAccount[] = [];
+      if (accountsSnap.empty && initialAccounts && initialAccounts.length > 0) {
+        accounts = initialAccounts;
+        const aBatch = writeBatch(db);
+        initialAccounts.forEach(a => aBatch.set(doc(db, COLLECTIONS.USERS, a.id), a));
+        await aBatch.commit().catch(e => console.warn('Could not seed missing accounts:', e));
+      } else {
+        accounts = accountsSnap.docs.map(d => d.data() as UserAccount);
+      }
 
       return {
         students,
@@ -277,7 +322,7 @@ export async function saveStudentToFirestore(student: Student) {
   try {
     await setDoc(doc(db, COLLECTIONS.STUDENTS, student.id), student, { merge: true });
   } catch (e) {
-    console.warn('Could not persist student to Firestore:', e);
+    handleFirestoreError(e, OperationType.WRITE, `${COLLECTIONS.STUDENTS}/${student.id}`);
   }
 }
 
@@ -285,7 +330,7 @@ export async function saveProjectToFirestore(project: Project) {
   try {
     await setDoc(doc(db, COLLECTIONS.PROJECTS, project.id), project, { merge: true });
   } catch (e) {
-    console.warn('Could not persist project to Firestore:', e);
+    handleFirestoreError(e, OperationType.WRITE, `${COLLECTIONS.PROJECTS}/${project.id}`);
   }
 }
 
@@ -293,7 +338,7 @@ export async function saveEventToFirestore(event: UniversityEvent) {
   try {
     await setDoc(doc(db, COLLECTIONS.EVENTS, event.id), event, { merge: true });
   } catch (e) {
-    console.warn('Could not persist event to Firestore:', e);
+    handleFirestoreError(e, OperationType.WRITE, `${COLLECTIONS.EVENTS}/${event.id}`);
   }
 }
 
@@ -301,7 +346,7 @@ export async function saveAnnouncementToFirestore(announcement: Announcement) {
   try {
     await setDoc(doc(db, COLLECTIONS.ANNOUNCEMENTS, announcement.id), announcement, { merge: true });
   } catch (e) {
-    console.warn('Could not persist announcement to Firestore:', e);
+    handleFirestoreError(e, OperationType.WRITE, `${COLLECTIONS.ANNOUNCEMENTS}/${announcement.id}`);
   }
 }
 
@@ -309,7 +354,7 @@ export async function saveCertificateToFirestore(certificate: Certificate) {
   try {
     await setDoc(doc(db, COLLECTIONS.CERTIFICATES, certificate.id), certificate, { merge: true });
   } catch (e) {
-    console.warn('Could not persist certificate to Firestore:', e);
+    handleFirestoreError(e, OperationType.WRITE, `${COLLECTIONS.CERTIFICATES}/${certificate.id}`);
   }
 }
 
@@ -317,7 +362,7 @@ export async function saveTeacherToFirestore(teacher: Teacher) {
   try {
     await setDoc(doc(db, COLLECTIONS.TEACHERS, teacher.id), teacher, { merge: true });
   } catch (e) {
-    console.warn('Could not persist teacher to Firestore:', e);
+    handleFirestoreError(e, OperationType.WRITE, `${COLLECTIONS.TEACHERS}/${teacher.id}`);
   }
 }
 
@@ -325,7 +370,7 @@ export async function deleteTeacherFromFirestore(teacherId: string) {
   try {
     await deleteDoc(doc(db, COLLECTIONS.TEACHERS, teacherId));
   } catch (e) {
-    console.warn('Could not delete teacher from Firestore:', e);
+    handleFirestoreError(e, OperationType.DELETE, `${COLLECTIONS.TEACHERS}/${teacherId}`);
   }
 }
 
@@ -333,7 +378,7 @@ export async function saveAccountToFirestore(account: UserAccount) {
   try {
     await setDoc(doc(db, COLLECTIONS.USERS, account.id), account, { merge: true });
   } catch (e) {
-    console.warn('Could not persist account to Firestore:', e);
+    handleFirestoreError(e, OperationType.WRITE, `${COLLECTIONS.USERS}/${account.id}`);
   }
 }
 
@@ -341,6 +386,23 @@ export async function deleteAccountFromFirestore(accountId: string) {
   try {
     await deleteDoc(doc(db, COLLECTIONS.USERS, accountId));
   } catch (e) {
-    console.warn('Could not delete account from Firestore:', e);
+    handleFirestoreError(e, OperationType.DELETE, `${COLLECTIONS.USERS}/${accountId}`);
   }
 }
+
+export async function deleteStudentFromFirestore(studentId: string) {
+  try {
+    await deleteDoc(doc(db, COLLECTIONS.STUDENTS, studentId));
+  } catch (e) {
+    handleFirestoreError(e, OperationType.DELETE, `${COLLECTIONS.STUDENTS}/${studentId}`);
+  }
+}
+
+export async function deleteProjectFromFirestore(projectId: string) {
+  try {
+    await deleteDoc(doc(db, COLLECTIONS.PROJECTS, projectId));
+  } catch (e) {
+    handleFirestoreError(e, OperationType.DELETE, `${COLLECTIONS.PROJECTS}/${projectId}`);
+  }
+}
+

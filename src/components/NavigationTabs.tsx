@@ -125,25 +125,19 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
       return [
         {
           id: 'teacher_portal' as ActiveTab,
-          label: 'Biriktirilgan Talabalar',
+          label: 'Biriktirilgan Talabalarim',
           icon: GraduationCap,
-          badge: 'Ilmiy faoliyat',
-        },
-        {
-          id: 'students' as ActiveTab,
-          label: 'Talabalar Bazasi',
-          icon: Users,
-          badge: counts.students,
+          badge: counts.pendingApprovals > 0 ? `${counts.pendingApprovals} ta kutilmoqda` : 'Kabinet',
         },
         {
           id: 'projects' as ActiveTab,
-          label: 'Loyihalar',
+          label: 'Loyihalar & Startaplar',
           icon: Lightbulb,
           badge: counts.projects,
         },
         {
           id: 'events' as ActiveTab,
-          label: 'Tadbirlar',
+          label: 'Tadbirlar & Tanlovlar',
           icon: CalendarDays,
           badge: counts.events,
         },
@@ -155,7 +149,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
         },
         {
           id: 'faculty' as ActiveTab,
-          label: 'Arizalarni Tasdiqlash',
+          label: 'Yutuqlarni Tasdiqlash',
           icon: CheckCheck,
           badge: counts.pendingApprovals > 0 ? `${counts.pendingApprovals} ta` : null,
         },

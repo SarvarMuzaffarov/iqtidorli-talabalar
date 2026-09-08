@@ -22,6 +22,7 @@ export interface Achievement {
   level: 'respublika_1' | 'respublika_qatnashish' | 'xalqaro' | 'viloyat' | 'universitet';
   points: number;
   documentUrl?: string;
+  documentName?: string;
   verified: boolean;
   verifiedBy?: string;
   issuer?: string;
@@ -47,10 +48,21 @@ export interface Project {
   funding: string; // e.g. "50,000,000 so'm (Innovatsion rivojlanish agentligi granti)"
   awards: string; // e.g. "Startup-2026 tanlovida 1-o'rin"
   files?: string[];
+  presentationUrl?: string;
+  presentationName?: string;
   imageUrl: string;
   videoUrl?: string;
   status: 'faol' | 'yakunlangan' | 'inkubatsiyada';
   createdAt: string;
+}
+
+export interface UniversityEventRegistration {
+  studentId: string;
+  studentName: string;
+  projectId?: string;
+  projectName?: string;
+  topicOrNote?: string;
+  registeredAt: string;
 }
 
 export interface UniversityEvent {
@@ -64,6 +76,7 @@ export interface UniversityEvent {
   registrationDeadline: string;
   capacityLimit: number;
   registeredStudentIds: string[];
+  registrations?: UniversityEventRegistration[];
   responsiblePerson: string;
   files?: string[];
   status: 'active' | 'completed' | 'upcoming';
