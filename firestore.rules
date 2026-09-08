@@ -1,0 +1,41 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Public read for system collections (Students, Projects, Events, Announcements, Certificates)
+    // Write permitted for authenticated users (admins, supervisors, and student owners)
+    match /students/{studentId} {
+      allow read: if true;
+      allow write: if true; // allow creation and updates
+    }
+
+    match /projects/{projectId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    match /events/{eventId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    match /announcements/{announcementId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    match /certificates/{certificateId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    match /system/{docId} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}

@@ -46,6 +46,14 @@ import {
   INITIAL_CERTIFICATES,
   SCORING_RULES
 } from './mockData';
+import { 
+  syncInitialDataToFirestore,
+  saveStudentToFirestore,
+  saveProjectToFirestore,
+  saveEventToFirestore,
+  saveAnnouncementToFirestore,
+  saveCertificateToFirestore
+} from './lib/firestoreService';
 
 export default function App() {
   const { mode } = useEyeCare();
@@ -103,7 +111,28 @@ export default function App() {
   const [preselectedEventForCert, setPreselectedEventForCert] = useState<string>('');
   const [globalSearchQuery, setGlobalSearchQuery] = useState('');
 
-  // Persist state changes
+  // Initial Firestore sync
+  useEffect(() => {
+    let isMounted = true;
+    syncInitialDataToFirestore(
+      INITIAL_STUDENTS,
+      INITIAL_PROJECTS,
+      INITIAL_EVENTS,
+      INITIAL_ANNOUNCEMENTS,
+      INITIAL_CERTIFICATES
+    ).then((res) => {
+      if (res && isMounted) {
+        if (res.students && res.students.length > 0) setStudents(res.students);
+        if (res.projects && res.projects.length > 0) setProjects(res.projects);
+        if (res.events && res.events.length > 0) setEvents(res.events);
+        if (res.announcements && res.announcements.length > 0) setAnnouncements(res.announcements);
+        if (res.certificates && res.certificates.length > 0) setCertificates(res.certificates);
+      }
+    });
+    return () => { isMounted = false; };
+  }, []);
+
+  // Persist state changes (both localStorage cache and Firestore cloud persistence)
   useEffect(() => {
     saveToStorage(STORAGE_KEYS.STUDENTS, students);
   }, [students]);
@@ -143,6 +172,7 @@ export default function App() {
         if (selectedStudent?.id === studentId) {
           setSelectedStudent(updatedStudent);
         }
+        saveStudentToFirestore(updatedStudent);
         return updatedStudent;
       })
     );
@@ -153,10 +183,12 @@ export default function App() {
     setStudents((prev) => 
       prev.map((s) => {
         if (s.id !== studentId) return s;
-        return {
+        const updated = {
           ...s,
           achievements: [achievement, ...(s.achievements || [])],
         };
+        saveStudentToFirestore(updated);
+        return updated;
       })
     );
   };
@@ -180,11 +212,13 @@ export default function App() {
         const projectPoints = (s.projectIds?.length || 0) * 40;
         const newTotalPoints = verifiedPoints + projectPoints;
 
-        return {
+        const updatedStudent = {
           ...s,
           achievements: updatedAchievements,
           totalPoints: newTotalPoints
         };
+        saveStudentToFirestore(updatedStudent);
+        return updatedStudent;
       })
     );
   };
@@ -192,19 +226,29 @@ export default function App() {
   // Handler: Teacher updates recommendation
   const handleUpdateRecommendation = (studentId: string, recommendation: string) => {
     setStudents((prev) => 
-      prev.map((s) => s.id === studentId ? { ...s, facultyRecommendation: recommendation } : s)
+      prev.map((s) => {
+        if (s.id === studentId) {
+          const updated = { ...s, facultyRecommendation: recommendation };
+          saveStudentToFirestore(updated);
+          return updated;
+        }
+        return s;
+      })
     );
   };
 
   // Handler: Add New Project
   const handleAddProject = (newProject: Project) => {
     setProjects((prev) => [newProject, ...prev]);
+    saveProjectToFirestore(newProject);
     const leaderId = newProject.teamMembers[0]?.id;
     if (leaderId) {
       setStudents((prev) => 
         prev.map((s) => {
           if (s.id === leaderId && !s.projectIds.includes(newProject.id)) {
-            return { ...s, projectIds: [...s.projectIds, newProject.id], totalPoints: s.totalPoints + 40 };
+            const updated = { ...s, projectIds: [...s.projectIds, newProject.id], totalPoints: s.totalPoints + 40 };
+            saveStudentToFirestore(updated);
+            return updated;
           }
           return s;
         })
@@ -215,11 +259,13 @@ export default function App() {
   // Handler: Add New Student
   const handleAddStudent = (newStudent: Student) => {
     setStudents((prev) => [newStudent, ...prev]);
+    saveStudentToFirestore(newStudent);
   };
 
   // Handler: Create University Event
   const handleCreateEvent = (newEvent: UniversityEvent) => {
     setEvents((prev) => [newEvent, ...prev]);
+    saveEventToFirestore(newEvent);
   };
 
   // Handler: Register for Event
@@ -228,10 +274,12 @@ export default function App() {
       prev.map((ev) => {
         if (ev.id !== eventId) return ev;
         if (ev.registeredStudentIds.includes(studentId)) return ev;
-        return {
+        const updated = {
           ...ev,
           registeredStudentIds: [...ev.registeredStudentIds, studentId]
         };
+        saveEventToFirestore(updated);
+        return updated;
       })
     );
   };
@@ -241,10 +289,12 @@ export default function App() {
     setEvents((prev) => 
       prev.map((ev) => {
         if (ev.id !== eventId) return ev;
-        return {
+        const updated = {
           ...ev,
           registeredStudentIds: ev.registeredStudentIds.filter((id) => id !== studentId)
         };
+        saveEventToFirestore(updated);
+        return updated;
       })
     );
   };
@@ -252,20 +302,24 @@ export default function App() {
   // Handler: Create Announcement
   const handleCreateAnnouncement = (newAnnouncement: Announcement) => {
     setAnnouncements((prev) => [newAnnouncement, ...prev]);
+    saveAnnouncementToFirestore(newAnnouncement);
   };
 
   // Handler: Create Certificates Batch
   const handleCreateCertificates = (newCertificates: Certificate[]) => {
     setCertificates((prev) => [...newCertificates, ...prev]);
     newCertificates.forEach((cert) => {
+      saveCertificateToFirestore(cert);
       setStudents((prev) => 
         prev.map((s) => {
           if (s.id === cert.studentId && !s.certificateIds.includes(cert.id)) {
-            return {
+            const updated = {
               ...s,
               certificateIds: [...s.certificateIds, cert.id],
               totalPoints: s.totalPoints + 15
             };
+            saveStudentToFirestore(updated);
+            return updated;
           }
           return s;
         })

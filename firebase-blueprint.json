@@ -1,0 +1,119 @@
+{
+  "entities": {
+    "Student": {
+      "title": "Student",
+      "description": "Talabalar bazasi va shaxsiy portfolio ma'lumotlari",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentIdNumber": { "type": "string" },
+        "fullName": { "type": "string" },
+        "faculty": { "type": "string" },
+        "direction": { "type": "string" },
+        "course": { "type": "number" },
+        "group": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "avatarUrl": { "type": "string" },
+        "telegramUsername": { "type": "string" },
+        "interests": { "type": "array", "items": { "type": "string" } },
+        "competencies": { "type": "array", "items": { "type": "string" } },
+        "gpa": { "type": "number" },
+        "scientificSupervisor": { "type": "string" },
+        "totalPoints": { "type": "number" },
+        "achievements": { "type": "array", "items": { "type": "object" } },
+        "projectIds": { "type": "array", "items": { "type": "string" } },
+        "certificateIds": { "type": "array", "items": { "type": "string" } },
+        "bio": { "type": "string" },
+        "facultyRecommendation": { "type": "string" }
+      },
+      "required": ["id", "fullName", "totalPoints"]
+    },
+    "Project": {
+      "title": "Project",
+      "description": "Talabalar va kafedralar ilmiy loyihalari",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "direction": { "type": "string" },
+        "problem": { "type": "string" },
+        "solution": { "type": "string" },
+        "description": { "type": "string" },
+        "teamMembers": { "type": "array", "items": { "type": "object" } },
+        "supervisor": { "type": "string" },
+        "stage": { "type": "string" },
+        "hasPrototype": { "type": "boolean" },
+        "funding": { "type": "string" },
+        "awards": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name", "direction"]
+    },
+    "UniversityEvent": {
+      "title": "UniversityEvent",
+      "description": "Universitet tadbirlari va tanlovlar",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "location": { "type": "string" },
+        "description": { "type": "string" },
+        "targetAudience": { "type": "string" },
+        "registrationDeadline": { "type": "string" },
+        "capacityLimit": { "type": "number" },
+        "registeredStudentIds": { "type": "array", "items": { "type": "string" } },
+        "responsiblePerson": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "title", "date"]
+    },
+    "Announcement": {
+      "title": "Announcement",
+      "description": "E'lonlar va yangiliklar",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "targetType": { "type": "string" },
+        "date": { "type": "string" },
+        "author": { "type": "string" },
+        "urgent": { "type": "boolean" }
+      },
+      "required": ["id", "title", "content"]
+    },
+    "Certificate": {
+      "title": "Certificate",
+      "description": "Elektron sertifikatlar va QR kodlar",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "certificateNumber": { "type": "string" },
+        "studentId": { "type": "string" },
+        "studentName": { "type": "string" },
+        "studentFaculty": { "type": "string" },
+        "eventId": { "type": "string" },
+        "eventName": { "type": "string" },
+        "issueDate": { "type": "string" },
+        "qrVerificationUrl": { "type": "string" },
+        "reason": { "type": "string" },
+        "signatory": { "type": "string" },
+        "signatoryTitle": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "certificateNumber", "studentId"]
+    }
+  },
+  "firestore": {
+    "students": { "entity": "Student" },
+    "projects": { "entity": "Project" },
+    "events": { "entity": "UniversityEvent" },
+    "announcements": { "entity": "Announcement" },
+    "certificates": { "entity": "Certificate" }
+  }
+}
