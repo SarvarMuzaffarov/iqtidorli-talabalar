@@ -16,7 +16,8 @@ import {
   Sparkles,
   UserPlus,
   LogOut,
-  Send
+  Send,
+  Database
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -26,6 +27,7 @@ interface NavbarProps {
   activeStudentId?: string;
   onActiveStudentChange?: (id: string) => void;
   onOpenVerifyModal: () => void;
+  onOpenFirebaseStatus?: () => void;
   onOpenAddStudent?: () => void;
   onResetData?: () => void;
   onLogout?: () => void;
@@ -42,6 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   activeStudentId = '',
   onActiveStudentChange,
   onOpenVerifyModal,
+  onOpenFirebaseStatus,
   onOpenAddStudent,
   onResetData,
   onLogout,
@@ -154,6 +157,20 @@ export const Navbar: React.FC<NavbarProps> = ({
               <QrCode className="w-4 h-4 text-emerald-400" />
               <span className="hidden sm:inline">QR Tekshirish</span>
             </button>
+
+            {/* Firebase Database Status Modal Button */}
+            {onOpenFirebaseStatus && (
+              <button
+                id="firebase-status-nav-btn"
+                onClick={onOpenFirebaseStatus}
+                title="Firebase Firestore bulutli baza ma'lumotlari"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 text-xs font-semibold transition"
+              >
+                <Database className="w-4 h-4 text-amber-400" />
+                <span className="hidden sm:inline">Firebase</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              </button>
+            )}
 
             {/* Eye-Care Visual Comfort Toggle */}
             <EyeCareControls variant="button" />

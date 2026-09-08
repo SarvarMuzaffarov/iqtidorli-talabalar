@@ -52,8 +52,14 @@ import {
   saveProjectToFirestore,
   saveEventToFirestore,
   saveAnnouncementToFirestore,
-  saveCertificateToFirestore
+  saveCertificateToFirestore,
+  subscribeToStudents,
+  subscribeToProjects,
+  subscribeToEvents,
+  subscribeToAnnouncements,
+  subscribeToCertificates
 } from './lib/firestoreService';
+import { FirebaseStatusModal } from './components/FirebaseStatusModal';
 
 export default function App() {
   const { mode } = useEyeCare();
@@ -108,10 +114,11 @@ export default function App() {
   const [verifyModalOpen, setVerifyModalOpen] = useState(false);
   const [verifyInitialNumber, setVerifyInitialNumber] = useState<string>('');
   const [addStudentModalOpen, setAddStudentModalOpen] = useState(false);
+  const [firebaseModalOpen, setFirebaseModalOpen] = useState(false);
   const [preselectedEventForCert, setPreselectedEventForCert] = useState<string>('');
   const [globalSearchQuery, setGlobalSearchQuery] = useState('');
 
-  // Initial Firestore sync
+  // Initial Firestore sync and real-time listeners
   useEffect(() => {
     let isMounted = true;
     syncInitialDataToFirestore(
@@ -129,7 +136,32 @@ export default function App() {
         if (res.certificates && res.certificates.length > 0) setCertificates(res.certificates);
       }
     });
-    return () => { isMounted = false; };
+
+    // Real-time updates subscription from Firebase Cloud Firestore
+    const unsubStudents = subscribeToStudents((liveStudents) => {
+      if (isMounted) setStudents(liveStudents);
+    });
+    const unsubProjects = subscribeToProjects((liveProjects) => {
+      if (isMounted) setProjects(liveProjects);
+    });
+    const unsubEvents = subscribeToEvents((liveEvents) => {
+      if (isMounted) setEvents(liveEvents);
+    });
+    const unsubAnnouncements = subscribeToAnnouncements((liveAnnouncements) => {
+      if (isMounted) setAnnouncements(liveAnnouncements);
+    });
+    const unsubCertificates = subscribeToCertificates((liveCertificates) => {
+      if (isMounted) setCertificates(liveCertificates);
+    });
+
+    return () => { 
+      isMounted = false; 
+      unsubStudents();
+      unsubProjects();
+      unsubEvents();
+      unsubAnnouncements();
+      unsubCertificates();
+    };
   }, []);
 
   // Persist state changes (both localStorage cache and Firestore cloud persistence)
@@ -492,6 +524,7 @@ export default function App() {
           saveToStorage(STORAGE_KEYS.ACTIVE_STUDENT_ID, id);
         }}
         onOpenVerifyModal={() => handleOpenVerifyWithNumber()}
+        onOpenFirebaseStatus={() => setFirebaseModalOpen(true)}
         onOpenAddStudent={() => setAddStudentModalOpen(true)}
         onLogout={handleLogout}
         unreadAnnouncementsCount={announcements.filter((a) => a.urgent).length}
@@ -771,6 +804,12 @@ export default function App() {
           onAddStudent={handleAddStudent}
         />
       )}
+
+      {/* 6. Firebase Cloud Database Status & Diagnostics Modal */}
+      <FirebaseStatusModal
+        isOpen={firebaseModalOpen}
+        onClose={() => setFirebaseModalOpen(false)}
+      />
 
     </div>
   );
