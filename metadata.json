@@ -1,0 +1,6 @@
+{
+  "name": "TKTI Yangiyer filiali - TalentHub Iqtidorli Talabalar Platformasi",
+  "description": "Toshkent kimyo-texnologiya instituti Yangiyer filiali iqtidorli talabalarni boshqarish, loyihalar, olimpiadalar, sertifikatlar va portfolio platformasi.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

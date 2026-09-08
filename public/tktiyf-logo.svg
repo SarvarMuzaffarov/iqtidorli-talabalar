@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Top arc for organization title -->
+    <path id="top-arc" d="M 68,250 A 182,182 0 1,1 432,250" fill="none" />
+    <!-- Bottom arc for branch name -->
+    <path id="bottom-arc" d="M 432,250 A 182,182 0 0,1 68,250" fill="none" />
+    
+    <!-- Subtle linear gradient for leaves and background -->
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#15803d" />
+      <stop offset="100%" stop-color="#166534" />
+    </linearGradient>
+    <linearGradient id="innerBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f0f7fc" />
+      <stop offset="100%" stop-color="#e2f0f9" />
+    </linearGradient>
+  </defs>
+
+  <!-- Outer Ring Border -->
+  <circle cx="250" cy="250" r="244" fill="#08223d" stroke="#041426" stroke-width="4" />
+  
+  <!-- Outer thin white accent ring -->
+  <circle cx="250" cy="250" r="236" fill="none" stroke="#ffffff" stroke-width="3" stroke-opacity="0.9" />
+
+  <!-- Navy circular text ribbon background -->
+  <circle cx="250" cy="250" r="232" fill="#092543" />
+
+  <!-- Inner border ring -->
+  <circle cx="250" cy="250" r="150" fill="#ffffff" stroke="#ffffff" stroke-width="3" />
+  <circle cx="250" cy="250" r="147" fill="url(#innerBg)" stroke="#092543" stroke-width="2.5" />
+
+  <!-- Circular Text in White -->
+  <text fill="#ffffff" font-family="'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="20.5" letter-spacing="4px">
+    <textPath href="#top-arc" startOffset="50%" text-anchor="middle">
+      TOSHKENT KIMYO - TEXNOLOGIYA INSTITUTI
+    </textPath>
+  </text>
+
+  <text fill="#ffffff" font-family="'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="23.5" letter-spacing="6.5px">
+    <textPath href="#bottom-arc" startOffset="50%" text-anchor="middle">
+      YANGIYER FILIALI
+    </textPath>
+  </text>
+
+  <!-- Side separating dots -->
+  <circle cx="65" cy="250" r="4" fill="#38bdf8" />
+  <circle cx="435" cy="250" r="4" fill="#38bdf8" />
+
+  <!-- ================= INNER GRAPHICS ================= -->
+
+  <!-- Left: Curved Innovation / Wi-Fi Waves -->
+  <g stroke="#092543" fill="none" stroke-width="5" stroke-linecap="round">
+    <path d="M 125,245 A 28,28 0 0,1 170,245" />
+    <path d="M 134,253 A 18,18 0 0,1 161,253" />
+    <path d="M 143,260 A 8,8 0 0,1 152,260" />
+  </g>
+
+  <!-- Center-Top: Chemical Factory Silhouette -->
+  <!-- Left tall smokestack -->
+  <path d="M 205,178 L 198,215 L 214,215 L 210,178 Z" fill="#092543" />
+  <!-- Sprout on left smokestack -->
+  <path d="M 206,176 C 203,165 197,156 198,153 C 205,155 208,162 208,175 Z" fill="#16a34a" />
+  <path d="M 206,172 C 209,165 215,160 217,162 C 215,168 210,172 206,172 Z" fill="#22c55e" />
+
+  <!-- Right smokestacks (double roof) -->
+  <rect x="335" y="184" width="14" height="28" rx="2" fill="#092543" />
+  <rect x="355" y="180" width="14" height="32" rx="2" fill="#092543" />
+  <!-- Sprout on right smokestacks -->
+  <path d="M 342,183 C 340,173 336,166 338,164 C 344,166 346,172 344,183 Z" fill="#16a34a" />
+  <path d="M 362,179 C 364,170 370,165 372,166 C 370,172 366,176 362,179 Z" fill="#22c55e" />
+
+  <!-- Main Factory building silhouette with roof gable and windows -->
+  <path d="M 188,258 L 188,215 L 212,215 L 240,195 L 268,215 L 368,215 L 380,258 Z" fill="#092543" />
+
+  <!-- Factory windows grid (white squares) -->
+  <g fill="#ffffff">
+    <rect x="198" y="240" width="8" height="8" rx="1.5" />
+    <rect x="210" y="240" width="8" height="8" rx="1.5" />
+    <rect x="222" y="240" width="8" height="8" rx="1.5" />
+    <rect x="234" y="240" width="8" height="8" rx="1.5" />
+    
+    <rect x="198" y="226" width="8" height="8" rx="1.5" />
+    <rect x="210" y="226" width="8" height="8" rx="1.5" />
+    <rect x="222" y="226" width="8" height="8" rx="1.5" />
+    <rect x="234" y="226" width="8" height="8" rx="1.5" />
+  </g>
+
+  <!-- Right Foreground: Two Stylized Eco Green Leaves -->
+  <!-- Back larger leaf -->
+  <path d="M 265,258 C 265,210 300,200 345,215 C 370,225 365,258 265,258 Z" fill="#0d406b" opacity="0.9" />
+  <!-- Front vibrant green leaves -->
+  <path d="M 268,258 C 275,205 315,198 335,218 C 345,232 328,258 268,258 Z" fill="url(#leafGrad)" />
+  <path d="M 325,258 C 330,220 360,215 372,230 C 380,242 368,258 325,258 Z" fill="#15803d" />
+  <!-- Leaf inner vein line -->
+  <path d="M 270,258 Q 302,230 334,220" fill="none" stroke="#86efac" stroke-width="2.5" stroke-linecap="round" />
+  <path d="M 330,258 Q 350,240 370,232" fill="none" stroke="#86efac" stroke-width="2" stroke-linecap="round" />
+
+  <!-- Center Text: "TKTIYF" in distinctive bold geometry -->
+  <g fill="#092543">
+    <text x="250" y="296" font-family="'Space Grotesk', 'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="34" letter-spacing="14px" text-anchor="middle">
+      TKTIYF
+    </text>
+  </g>
+
+  <!-- Bottom Gear / Cogwheel segment under text -->
+  <g fill="#092543">
+    <path d="M 320,302 A 28,28 0 0,1 372,302 L 366,322 A 24,24 0 0,0 326,322 Z" />
+    <!-- Gear teeth -->
+    <rect x="330" y="322" width="6" height="6" rx="1" transform="rotate(10 333 325)" />
+    <rect x="343" y="325" width="6" height="6" rx="1" />
+    <rect x="356" y="322" width="6" height="6" rx="1" transform="rotate(-10 359 325)" />
+  </g>
+
+  <!-- Foundation line under letters -->
+  <line x1="140" y1="272" x2="360" y2="272" stroke="#092543" stroke-width="2.5" stroke-linecap="round" />
+
+  <!-- Year "2019" at the bottom inside box / techno font -->
+  <g fill="#092543" font-family="'Space Grotesk', monospace, sans-serif" font-weight="700" font-size="24" letter-spacing="6px">
+    <rect x="210" y="342" width="80" height="24" rx="4" fill="none" stroke="#092543" stroke-width="2" />
+    <text x="250" y="361" text-anchor="middle">2019</text>
+  </g>
+</svg>

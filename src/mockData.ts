@@ -1,0 +1,548 @@
+import { Student, Project, UniversityEvent, Announcement, Certificate, ScoringRule } from './types';
+
+export const SCORING_RULES: ScoringRule[] = [
+  { activity: "Respublika tanlovida 1-o'rin", points: 100, category: 'tanlov', description: "Respublika bosqichidagi ko'rik-tanlovlarda 1-o'rin" },
+  { activity: "Respublika tanlovida qatnashish", points: 30, category: 'tanlov', description: "Respublika ko'rik-tanlovlari final ishtirokchisi sertifikati" },
+  { activity: "Xalqaro tanlov / Olimpiada", points: 120, category: 'xalqaro', description: "Xalqaro darajadagi nufuzli musobaqa yoki tanlov g'olibi/sovrindori" },
+  { activity: "Ilmiy maqola (Scopus/OAK)", points: 50, category: 'maqola', description: "Xalqaro indekslangan va OAK ro'yxatidagi jurnallarda maqola" },
+  { activity: "Startap loyiha (Amaldagi prototip)", points: 70, category: 'startap', description: "Hakamlar tomonidan ijobiy baholangan va prototipi mavjud startap" },
+  { activity: "Sertifikat (Til/Kasbiy)", points: 10, category: 'sertifikat', description: "IELTS, TOEFL, CEFR B2/C1 yoki xalqaro kasbiy sertifikat" },
+  { activity: "Konferensiya (Tezis va ma'ruza)", points: 20, category: 'konferensiya', description: "Respublika va xalqaro ilmiy-amaliy konferensiyada ma'ruza" },
+  { activity: "Ilmiy loyiha (Fundamental/amaliy)", points: 40, category: 'loyiha', description: "Davlat granti yoki universitet ichki ilmiy loyihasida ijrochi" },
+  { activity: "Davlat va xalqaro grantlar", points: 80, category: 'grant', description: "Prezident, Beruniy, Islom Karimov yoki xalqaro fondlar granti" },
+  { activity: "Olimpiada 1-o'rin", points: 100, category: 'olimpiada', description: "Fan olimpiadalarining respublika bosqichi 1-o'rni" },
+];
+
+export const INITIAL_STUDENTS: Student[] = [
+  {
+    id: 'stud-1',
+    studentIdNumber: 'TKTI-2022-458',
+    fullName: 'Aliyev Ali Valijon o‘g‘li',
+    faculty: 'Oziq-ovqat texnologiyasi',
+    direction: 'Oziq-ovqat sanoati mashinalari va apparatlari',
+    course: 4,
+    group: '21-08 OTM',
+    phone: '+998 90 123 45 67',
+    email: 'ali.aliyev@tkti.uz',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+    telegramUsername: '@ali_aliyev_tkti',
+    interests: ['Sun\'iy intellekt', 'Aqlli qishloq xo\'jaligi', 'Robototexnika', 'Startaplar'],
+    competencies: ['Python', 'IoT mikrokontrollerlar', 'IELTS 7.5', '3D modellashtirish', 'Akademik yozish'],
+    gpa: 4.92,
+    scientificSupervisor: 'Prof. X. Muminov',
+    totalPoints: 985,
+    bio: 'Respublika startap tanlovlari g‘olibi, "Aqlli issiqxona" loyihasi muallifi. 4 ta xalqaro maqola va 12 ta tanlov sovrindori.',
+    facultyRecommendation: 'O‘quv va ilmiy faoliyatda yuqori tashabbuskor, institut faxri, Prezident stipendiyasiga tavsiya etilgan.',
+    projectIds: ['proj-1', 'proj-3'],
+    certificateIds: ['cert-1', 'cert-4'],
+    achievements: [
+      {
+        id: 'ach-1',
+        studentId: 'stud-1',
+        category: 'tanlov',
+        title: '“Startup-2026” Respublika yoshlar tanlovi 1-o‘rin',
+        description: '"Aqlli issiqxona" loyihasi bilan 100 mln so‘mlik investitsiya yutib olgan',
+        date: '2026-05-14',
+        level: 'respublika_1',
+        points: 100,
+        verified: true,
+        verifiedBy: 'TKTI Dekanat',
+        issuer: 'Innovatsion rivojlanish agentligi'
+      },
+      {
+        id: 'ach-2',
+        studentId: 'stud-1',
+        category: 'xalqaro',
+        title: 'Central Asian Youth Innovation Expo — Gran-pri',
+        description: 'Toshkentda o‘tkazilgan Markaziy Osiyo innovatsiyalar ko‘rgazmasida eng yaxshi agrotex texnologiya',
+        date: '2026-04-10',
+        level: 'xalqaro',
+        points: 120,
+        verified: true,
+        verifiedBy: 'TKTI Ilmiy bo‘lim',
+        issuer: 'CA Innovation Council'
+      },
+      {
+        id: 'ach-3',
+        studentId: 'stud-1',
+        category: 'startap',
+        title: '“Aqlli issiqxona” tijoratlashtirish startapi',
+        description: 'IoT sensorlar va energiya tejovchi bug‘latgichlar bilan jihozlangan prototip',
+        date: '2025-11-20',
+        level: 'respublika_1',
+        points: 70,
+        verified: true,
+        verifiedBy: 'TKTI Inkubatsiya markazi',
+        issuer: 'TKTI IT-Park'
+      },
+      {
+        id: 'ach-4',
+        studentId: 'stud-1',
+        category: 'maqola',
+        title: 'Scopus Q2 maqola: "Automated Climate Control in Hydroponic Systems"',
+        description: 'Journal of Agricultural Engineering and Technology, 2025',
+        date: '2025-09-18',
+        level: 'xalqaro',
+        points: 50,
+        verified: true,
+        verifiedBy: 'TKTI Ilmiy kengash',
+        issuer: 'Springer Nature'
+      },
+      {
+        id: 'ach-5',
+        studentId: 'stud-1',
+        category: 'sertifikat',
+        title: 'IELTS Academic 7.5 sertifikati',
+        description: 'Listening 8.0, Reading 7.5, Writing 7.0, Speaking 7.5',
+        date: '2025-06-12',
+        level: 'xalqaro',
+        points: 10,
+        verified: true,
+        issuer: 'British Council'
+      },
+      {
+        id: 'ach-6',
+        studentId: 'stud-1',
+        category: 'grant',
+        title: 'Beruniy nomli davlat stipendiyasi sohibi',
+        description: '2025/2026 o‘quv yili uchun Beruniy stipendiyasi g‘olibi',
+        date: '2025-10-01',
+        level: 'respublika_1',
+        points: 80,
+        verified: true,
+        issuer: 'Oliy ta\'lim, fan va innovatsiyalar vazirligi'
+      }
+    ]
+  },
+  {
+    id: 'stud-2',
+    studentIdNumber: 'TKTI-2023-112',
+    fullName: 'Karimova Madina Sherzod qizi',
+    faculty: 'Yoqilg‘i va organik birikmalar kimyoviy texnologiyasi',
+    direction: 'Biotexnologiya va polimerlar kimyosi',
+    course: 3,
+    group: '23-04 BIO',
+    phone: '+998 93 456 78 90',
+    email: 'madina.karimova@tkti.uz',
+    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
+    telegramUsername: '@madina_bio_tkti',
+    interests: ['Biopolimerlar', 'Eko-qadoqlar', 'Gen muhandisligi', 'Yashil kimyo'],
+    competencies: ['Xromatografiya', 'Spektrofotometriya', 'IELTS 7.0', 'Bio-informatika'],
+    gpa: 4.88,
+    scientificSupervisor: 'Dots. D. Azimov',
+    totalPoints: 920,
+    bio: 'Biotexnologiya va ekologik toza kompozit materiallar sohasida izlanuvchi talaba. "BioPlast-Eco" startapi asoschisi.',
+    facultyRecommendation: 'Laboratoriya tadqiqotlarida o‘ta tirishqoq, ilmiy konferensiyalarda faol ishtirok etadi.',
+    projectIds: ['proj-2'],
+    certificateIds: ['cert-2'],
+    achievements: [
+      {
+        id: 'ach-201',
+        studentId: 'stud-2',
+        category: 'tanlov',
+        title: '“Mirzo Ulug‘bek vorislari” Respublika bosqichi g‘olibi',
+        description: 'Kraxmal asosidagi parchalanuvchi polimer plyonkalar ixtirosi uchun',
+        date: '2026-03-22',
+        level: 'respublika_1',
+        points: 100,
+        verified: true,
+        issuer: 'Ulug‘bek jamg‘armasi'
+      },
+      {
+        id: 'ach-202',
+        studentId: 'stud-2',
+        category: 'xalqaro',
+        title: 'International Chemistry Olympiad (IChO Mentor Assistant)',
+        description: 'Toshkentda o‘tgan xalqaro kimyo forumida 1-darajali diplom',
+        date: '2025-12-05',
+        level: 'xalqaro',
+        points: 120,
+        verified: true,
+        issuer: 'UNESCO & O‘zR FA'
+      },
+      {
+        id: 'ach-203',
+        studentId: 'stud-2',
+        category: 'startap',
+        title: 'BioPlast Eco-Packaging startapi',
+        description: '6 oyda biologik parchalanuvchi sellofan o‘rnini bosuvchi qadoq ishlab chiqarish loyihasi',
+        date: '2025-08-15',
+        level: 'respublika_1',
+        points: 70,
+        verified: true,
+        issuer: 'Yoshlar ishlari agentligi'
+      },
+      {
+        id: 'ach-204',
+        studentId: 'stud-2',
+        category: 'maqola',
+        title: 'OAK maqola: "Makkajo‘xori kraxmali asosida sintez qilingan biopolimerlar"',
+        description: 'Kimyo va kimyo texnologiyasi jurnali, №3, 2025',
+        date: '2025-05-10',
+        level: 'respublika_1',
+        points: 50,
+        verified: true,
+        issuer: 'OAK jurnali'
+      }
+    ]
+  },
+  {
+    id: 'stud-3',
+    studentIdNumber: 'TKTI-2023-305',
+    fullName: 'Axmedov Vali Bobur o‘g‘li',
+    faculty: 'Neft va gazni qayta ishlash texnologiyasi',
+    direction: 'Neft-gaz kimyosi va katalitik jarayonlar',
+    course: 3,
+    group: '23-01 NGK',
+    phone: '+998 94 987 65 43',
+    email: 'vali.axmedov@tkti.uz',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+    telegramUsername: '@vali_axmedov_ng',
+    interests: ['Katalizatorlar', 'Neft chiqindilarini qayta ishlash', 'Termik kreking', 'Energiya samaradorligi'],
+    competencies: ['Aspen HYSYS', 'MATLAB', 'Texnik ingliz tili (B2)', 'Katalitik sintez'],
+    gpa: 4.75,
+    scientificSupervisor: 'Prof. S. Normatov',
+    totalPoints: 870,
+    bio: 'Neft shlamlaridan faollashtirilgan uglerod sorbenti olish bo‘yicha patent talabnomasi topshirgan.',
+    facultyRecommendation: 'Neft-gaz sanoati korxonalari bilan shartnomaviy ishlarda bevosita qatnashib kelmoqda.',
+    projectIds: ['proj-3'],
+    certificateIds: ['cert-3'],
+    achievements: [
+      {
+        id: 'ach-301',
+        studentId: 'stud-3',
+        category: 'tanlov',
+        title: '“O‘zbekneftgaz” innovatsion g‘oyalar tanlovi — 1-o‘rin',
+        description: 'Buxoro NQIZ chiqindilarini tozalash texnologiyasi',
+        date: '2026-02-18',
+        level: 'respublika_1',
+        points: 100,
+        verified: true,
+        issuer: 'O‘zbekneftgaz AJ'
+      },
+      {
+        id: 'ach-302',
+        studentId: 'stud-3',
+        category: 'startap',
+        title: 'SorbEco — sanoat oqava suvlarini tozalovchi granulalar',
+        description: 'Mahalliy xomashyodan olinadigan arzon narxli sorbent prototipi',
+        date: '2025-10-14',
+        level: 'respublika_1',
+        points: 70,
+        verified: true,
+        issuer: 'TKTI Innovatsiya markazi'
+      },
+      {
+        id: 'ach-303',
+        studentId: 'stud-3',
+        category: 'konferensiya',
+        title: 'Xalqaro ilmiy-amaliy anjuman ma\'ruzasi',
+        description: 'Toshkent kimyo forumi, plenar ma\'ruzachi',
+        date: '2025-11-28',
+        level: 'xalqaro',
+        points: 20,
+        verified: true,
+        issuer: 'TKTI'
+      }
+    ]
+  },
+  {
+    id: 'stud-4',
+    studentIdNumber: 'TKTI-2024-889',
+    fullName: 'Saidova Nilufar Ulug‘bek qizi',
+    faculty: 'Noorganik moddalar kimyoviy texnologiyasi',
+    direction: 'Mineral o‘g‘itlar va tuzlar texnologiyasi',
+    course: 2,
+    group: '24-02 NM',
+    phone: '+998 97 321 00 11',
+    email: 'nilufar.saidova@tkti.uz',
+    avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80',
+    telegramUsername: '@nilufar_chemistry',
+    interests: ['Mineral o‘g‘itlar', 'Nanotexnologiyalar', 'Ingliz tili', 'Ilmiy tarjima'],
+    competencies: ['IELTS 8.0', 'Kimyoviy kinetika', 'Statistika', 'Prezentatsiya mahorati'],
+    gpa: 4.95,
+    scientificSupervisor: 'Dots. R. Ergashev',
+    totalPoints: 760,
+    bio: 'Respublika kimyo olimpiadasi g‘olibi, IELTS 8.0 sohibasi. Ekologik toza azotli o‘g‘itlar ustida tadqiqot olib bormoqda.',
+    facultyRecommendation: 'Ingliz tilida mustaqil ilmiy tadqiqotlar olib borish salohiyatiga ega.',
+    projectIds: [],
+    certificateIds: [],
+    achievements: [
+      {
+        id: 'ach-401',
+        studentId: 'stud-4',
+        category: 'olimpiada',
+        title: 'Talabalar Respublika fan olimpiadasi (Kimyo) 1-o‘rin',
+        description: 'Barcha oliy o‘quv yurtlari talabalari o‘rtasida mutlaq g‘oliblik',
+        date: '2026-05-02',
+        level: 'respublika_1',
+        points: 100,
+        verified: true,
+        issuer: 'Oliy ta\'lim vazirligi'
+      },
+      {
+        id: 'ach-402',
+        studentId: 'stud-4',
+        category: 'sertifikat',
+        title: 'IELTS Academic 8.0',
+        description: 'Listening 8.5, Reading 8.5, Writing 7.5, Speaking 8.0',
+        date: '2025-08-20',
+        level: 'xalqaro',
+        points: 10,
+        verified: true,
+        issuer: 'IDP Education'
+      }
+    ]
+  },
+  {
+    id: 'stud-5',
+    studentIdNumber: 'TKTI-2022-774',
+    fullName: 'Rustamov Jasur Anvar o‘g‘li',
+    faculty: 'Muhandislik va avtomatlashtirish',
+    direction: 'Kimyo-texnologiya jarayonlarini avtomatlashtirish',
+    course: 4,
+    group: '21-02 MUB',
+    phone: '+998 91 555 33 22',
+    email: 'jasur.rustamov@tkti.uz',
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
+    telegramUsername: '@jasur_iot_tkti',
+    interests: ['Sun\'iy intellekt', 'PLC dasturlash', 'SCADA tizimlari', 'Mashina ko‘rishi'],
+    competencies: ['Python', 'C++', 'Siemens TIA Portal', 'OpenCV', 'TensorFlow'],
+    gpa: 4.62,
+    scientificSupervisor: 'Prof. X. Muminov',
+    totalPoints: 710,
+    bio: '"Aqlli issiqxona" va "Reaktor-AI" loyihalari apparat-dasturiy qismlari bosh muhandisi.',
+    facultyRecommendation: 'Sanoat korxonalarida avtomatlashtirish loyihalarini mustaqil loyihalash tajribasiga ega.',
+    projectIds: ['proj-1', 'proj-4'],
+    certificateIds: [],
+    achievements: [
+      {
+        id: 'ach-501',
+        studentId: 'stud-5',
+        category: 'loyiha',
+        title: 'Kimyoviy reaktorlarning AI monitoring tizimi',
+        description: 'Reaktor haroratini avtomatik modellashtirish algoritmi',
+        date: '2026-01-15',
+        level: 'respublika_1',
+        points: 40,
+        verified: true,
+        issuer: 'TKTI'
+      }
+    ]
+  }
+];
+
+export const INITIAL_PROJECTS: Project[] = [
+  {
+    id: 'proj-1',
+    name: 'Aqlli issiqxona (Smart GreenHouse IoT)',
+    direction: 'Agro-kimyo texnologiyasi va IoT',
+    problem: 'An\'anaviy issiqxonalarda harorat, namlik va tuproq kimyoviy tarkibining qo‘lda nazorat qilinishi natijasida 30-40% gacha hosil nobud bo‘ladi va ortiqcha energiya sarflanadi.',
+    solution: 'Ko‘p parametrli arzon IoT sensorlar va mikrokontrollerlar orqali mikroiqlimni avtomatik boshqarish, suv va o‘g‘it berishni sun\'iy intellekt modeli asosida optimallashtirish.',
+    description: 'Loyiha O‘zbekiston iqlim sharoitiga moslashtirilgan bo‘lib, suv va elektr energiyasini 45% gacha tejaydi. Mobil ilova va telegram bot orqali fermer har daqiqa xabardor bo‘lib turadi.',
+    teamMembers: [
+      { id: 'stud-1', name: 'Aliyev Ali', role: 'Loyiha rahbari & Algoritm' },
+      { id: 'stud-5', name: 'Rustamov Jasur', role: 'Hardware & IoT muhandisi' },
+      { id: 'stud-2', name: 'Karimova Madina', role: 'Oziqlantiruvchi biogumuslar tahlili' },
+      { id: 'stud-4', name: 'Saidova Nilufar', role: 'Mineral o‘g‘it eritmalari eksperti' }
+    ],
+    supervisor: 'Prof. X. Muminov',
+    stage: 'prototip',
+    hasPrototype: true,
+    funding: '100,000,000 so‘m (Innovatsion rivojlanish agentligi granti)',
+    awards: 'Startup-2026 Respublika tanlovida 1-o‘rin',
+    imageUrl: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=800&q=80',
+    videoUrl: 'https://youtu.be/sample-smart-greenhouse',
+    status: 'faol',
+    createdAt: '2025-09-01'
+  },
+  {
+    id: 'proj-2',
+    name: 'BioPlast Eco-Packaging (Biologik parchalanuvchi plyonkalar)',
+    direction: 'Biotexnologiya va polimerlar kimyosi',
+    problem: 'Polietilen va an\'anaviy plastik qadoqlar tabiatda 400 yildan ortiq saqlanib, ekologiyani jiddiy zaharlaydi.',
+    solution: 'Qishloq xo‘jaligi ikkilamchi chiqindilari (makkajo‘xori va bug‘doy poyalari kraxmali) asosida 180 kunda to‘liq chiruvchi elastik plyonka ishlab chiqarish.',
+    description: 'Oziq-ovqat mahsulotlarini qadoqlash uchun gigiyenik talablarga to‘liq javob beruvchi, suvga chidamli bio-polimer sintezi.',
+    teamMembers: [
+      { id: 'stud-2', name: 'Karimova Madina', role: 'Bosh tadqiqotchi' },
+      { id: 'stud-1', name: 'Aliyev Ali', role: 'Biznes model va marketing' }
+    ],
+    supervisor: 'Dots. D. Azimov',
+    stage: 'sinovda',
+    hasPrototype: true,
+    funding: '50,000,000 so‘m (Yoshlar ishlari agentligi granti)',
+    awards: '“Mirzo Ulug‘bek vorislari — 2026” sovrindori',
+    imageUrl: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=800&q=80',
+    status: 'faol',
+    createdAt: '2025-10-15'
+  },
+  {
+    id: 'proj-3',
+    name: 'SorbEco: Neft chiqindilaridan sanoat sorbentlari',
+    direction: 'Neft-gaz kimyosi va ekologiya',
+    problem: 'Neft qazib olish va qayta ishlashda hosil bo‘ladigan shlamlar daryolar va oqava suvlarni ifloslantiradi.',
+    solution: 'Mahalliy sanoat chiqindilaridan yuqori adsorbsiya sig‘imiga ega ko‘p martalik mikrog‘ovakli sorbent olish texnologiyasi.',
+    description: 'Mavjud xorijiy analoglariga nisbatan 3 barobar arzon va neft dog‘larini 98.7% gacha o‘ziga shimib oluvchi kompozit material.',
+    teamMembers: [
+      { id: 'stud-3', name: 'Axmedov Vali', role: 'Loyiha yetakchisi' }
+    ],
+    supervisor: 'Prof. S. Normatov',
+    stage: 'tadqiqot',
+    hasPrototype: true,
+    funding: 'TKTI ichki ilmiy granti (25,000,000 so‘m)',
+    awards: 'O‘zbekneftgaz innovatsion tanlovi 1-o‘rin',
+    imageUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80',
+    status: 'inkubatsiyada',
+    createdAt: '2025-11-01'
+  },
+  {
+    id: 'proj-4',
+    name: 'Reaktor-AI: Kimyoviy jarayonlar raqamli egizagi (Digital Twin)',
+    direction: 'Sun\'iy intellekt va Kimyo muhandisligi',
+    problem: 'Kimyo zavodlarida reaktorlar bosimi va haroratining kutilmagan tebranishlari xavfsizlikka tahdid soladi va xomashyoni buzadi.',
+    solution: 'Neyrotarmoqlar yordamida real vaqt rejimida reaktor holatini oldindan bashorat qiluvchi raqamli monitoring tizimi.',
+    description: 'Reaktor xavfli holatga kelishidan 15 daqiqa oldin ogohlantiruvchi intellektual modellashtirish dasturi.',
+    teamMembers: [
+      { id: 'stud-5', name: 'Rustamov Jasur', role: 'AI arxitektori' },
+      { id: 'stud-1', name: 'Aliyev Ali', role: 'Interfeys va integratsiya' }
+    ],
+    supervisor: 'Prof. X. Muminov',
+    stage: 'goya',
+    hasPrototype: false,
+    funding: 'Izlanmoqda (Venture pitching bosqichida)',
+    awards: 'TKTI Hackathon-2026 g‘olibi',
+    imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80',
+    status: 'faol',
+    createdAt: '2026-01-20'
+  }
+];
+
+export const INITIAL_EVENTS: UniversityEvent[] = [
+  {
+    id: 'event-1',
+    title: 'IdeaLab — 2026: Yosh ixtirochilar va g‘oyalar akseleratori',
+    date: '2026-09-08',
+    time: '10:00 - 16:30',
+    location: 'TKTI Bosh binosi, Faollar zali & Kovorking markazi',
+    description: 'Institut talabalari o‘rtasida eng yaxshi ilmiy-innovatsion g‘oyalar va startap loyihalarni saralash intensiv dasturi. G‘oliblarga mentorlik va sertifikatlar beriladi.',
+    targetAudience: 'Barcha fakultet 1-4 kurs talabalari va magistrlar',
+    registrationDeadline: '2026-09-07',
+    capacityLimit: 120,
+    registeredStudentIds: ['stud-1', 'stud-2', 'stud-3', 'stud-5'],
+    responsiblePerson: 'Ilmiy ishlar va innovatsiyalar bo‘yicha prorektorat',
+    status: 'completed',
+    bannerImage: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'event-2',
+    title: 'Startaplar kuni — 2026 (TKTI Startup Demo Day)',
+    date: '2026-09-25',
+    time: '09:30 - 15:00',
+    location: 'Toshkent sh., TKTI Yoshlar texnoparki zali',
+    description: 'Talabalar o‘zlarining ishlanmalari va prototiplarini investorlar, korxona vakillari va vazirlik ekspertlariga taqdim etishadi. Eng yaxshi 3 loyiha moliyalashtiriladi.',
+    targetAudience: 'Iqtidorli talabalar, startap jamoalari va ilmiy rahbarlar',
+    registrationDeadline: '2026-09-20',
+    capacityLimit: 80,
+    registeredStudentIds: ['stud-1', 'stud-2', 'stud-4'],
+    responsiblePerson: 'Innovatsion ishlanmalarni tijoratlashtirish bo‘limi',
+    status: 'active',
+    bannerImage: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'event-3',
+    title: '“Mirzo Ulug‘bek vorislari” respublika tanlovi institut saralashi',
+    date: '2026-10-12',
+    time: '11:00 - 17:00',
+    location: 'TKTI 2-o‘quv binosi, 305-auditoriya',
+    description: 'Respublika iqtidorli yoshlar tanlovining institut ichki bosqichi. Qatnashchilar taqdimot va test sinovlaridan o‘tadilar.',
+    targetAudience: '16-25 yoshgacha bo‘lgan barcha bakalavr talabalar',
+    registrationDeadline: '2026-10-05',
+    capacityLimit: 150,
+    registeredStudentIds: ['stud-2', 'stud-3', 'stud-4'],
+    responsiblePerson: 'Iqtidorli talabalar bilan ishlash bo‘limi boshlig‘i',
+    status: 'upcoming',
+    bannerImage: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80'
+  }
+];
+
+export const INITIAL_ANNOUNCEMENTS: Announcement[] = [
+  {
+    id: 'ann-1',
+    title: '“Mirzo Ulug‘bek vorislari” tanloviga hujjatlar qabuli boshlandi!',
+    content: 'Hurmatli iqtidorli talabalar! O‘zbekiston Respublikasi Prezidentining tegishli qaroriga asosan o‘tkaziladigan “Mirzo Ulug‘bek vorislari” respublika tanlovining 2026-yilgi mavsumiga arizalar qabuli boshlandi. G‘oliblar 1-bosqichda 1 mln 700 ming so‘m, respublika bosqichida esa 6 mln 800 ming so‘m bir martalik pul mukofoti va 100 reyting balliga ega bo‘ladilar.',
+    targetType: 'all',
+    date: '2026-09-05',
+    author: 'Iqtidorli talabalar bilan ishlash bo‘limi',
+    urgent: true,
+    sentToTelegram: true
+  },
+  {
+    id: 'ann-2',
+    title: 'Scopus Q1/Q2 jurnallariga maqola yozish bo‘yicha bepul master-klass',
+    content: 'Oziq-ovqat va kimyo texnologiyasi yo‘nalishi talabalari uchun xalqaro indekslangan nufuzli jurnallarga ilmiy maqola tayyorlash metodikasi bo‘yicha xorijiy professor ishtirokida amaliy seminar o‘tkaziladi.',
+    targetType: 'faculty',
+    targetValue: 'Oziq-ovqat texnologiyasi',
+    date: '2026-09-02',
+    author: 'Xalqaro aloqalar va ilmiy bo‘lim',
+    urgent: false,
+    sentToTelegram: true
+  },
+  {
+    id: 'ann-3',
+    title: '“Startup-2026” tanlovi yarim finalchilariga maxsus eslatma',
+    content: 'Institutimizdan saralangan 4 ta startap jamoasi 12-sentyabr kuni soat 14:00 da Texnopark kovorkingida rektor bilan uchrashuvga taklif etiladi. Taqdimot slaydlari va prototiplarni olib kelish so‘raladi.',
+    targetType: 'project_participants',
+    date: '2026-09-06',
+    author: 'TKTI Inkubatsiya markazi',
+    urgent: true,
+    sentToTelegram: true
+  }
+];
+
+export const INITIAL_CERTIFICATES: Certificate[] = [
+  {
+    id: 'cert-1',
+    certificateNumber: 'IL-2026-00125',
+    studentId: 'stud-3',
+    studentName: 'Karimov Vali',
+    studentFaculty: 'Neft va gazni qayta ishlash texnologiyasi',
+    eventId: 'event-1',
+    eventName: 'IdeaLab — 2026',
+    issueDate: '2026-09-08',
+    qrVerificationUrl: 'https://talenthub.tkti.uz/verify/IL-2026-00125',
+    reason: '“IdeaLab — 2026” ilmiy-innovatsion dasturida faol ishtirok etganligi va “SorbEco” loyihasi bilan taqdirlangani uchun berildi.',
+    signatory: 'Prof. U. Nigmatov',
+    signatoryTitle: 'TKTI Ilmiy ishlar va innovatsiyalar bo‘yicha prorektori',
+    status: 'valid'
+  },
+  {
+    id: 'cert-2',
+    certificateNumber: 'IL-2026-00126',
+    studentId: 'stud-1',
+    studentName: 'Aliyev Ali',
+    studentFaculty: 'Oziq-ovqat texnologiyasi',
+    eventId: 'event-1',
+    eventName: 'IdeaLab — 2026',
+    issueDate: '2026-09-08',
+    qrVerificationUrl: 'https://talenthub.tkti.uz/verify/IL-2026-00126',
+    reason: '“IdeaLab — 2026” dasturida “Aqlli issiqxona” agrotex loyihasi bilan eng yaxshi innovatsion prototip nominatsiyasi g‘olibi bo‘lgani uchun berildi.',
+    signatory: 'Prof. U. Nigmatov',
+    signatoryTitle: 'TKTI Ilmiy ishlar va innovatsiyalar bo‘yicha prorektori',
+    status: 'valid'
+  },
+  {
+    id: 'cert-3',
+    certificateNumber: 'IL-2026-00127',
+    studentId: 'stud-2',
+    studentName: 'Axmedova Madina (Karimova Madina)',
+    studentFaculty: 'Yoqilg‘i va organik birikmalar kimyoviy texnologiyasi',
+    eventId: 'event-1',
+    eventName: 'IdeaLab — 2026',
+    issueDate: '2026-09-08',
+    qrVerificationUrl: 'https://talenthub.tkti.uz/verify/IL-2026-00127',
+    reason: '“IdeaLab — 2026” dasturida “BioPlast” loyihasi bilan eko-tashabbus nominatsiyasi bo‘yicha faol ishtirok etganligi uchun berildi.',
+    signatory: 'Prof. U. Nigmatov',
+    signatoryTitle: 'TKTI Ilmiy ishlar va innovatsiyalar bo‘yicha prorektori',
+    status: 'valid'
+  }
+];

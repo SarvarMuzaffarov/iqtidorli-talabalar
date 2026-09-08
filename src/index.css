@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+/* Global Eye-Care Typography & Visual Ergonomics */
+:root {
+  color-scheme: light dark;
+}
+
+html {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Subtle, gentle blue-light reduction for ocular relaxation */
+html.eye-care-filter {
+  /* Very slight warm gamma to relax retina without distorting colors */
+  filter: sepia(3%) saturate(98%);
+}
+
+/* Eye-care Font Scaling */
+html.font-scale-normal {
+  font-size: 16px;
+}
+html.font-scale-comfortable {
+  font-size: 17.5px;
+}
+html.font-scale-spacious {
+  font-size: 19px;
+}
+
+/* Themes */
+/* 1. Soft Light: Soothing Pearl & Warm Slate (Zero Glare, Restful Contrast) */
+html.theme-soft-light {
+  --bg-primary: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #f1f5f9;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border-soft: #e2e8f0;
+}
+
+/* 2. Warm Sepia: Calming Paper Reading Atmosphere (Zero Blue Light Fatigue) */
+html.theme-warm-sepia {
+  --bg-primary: #faf6ef;
+  --bg-surface: #fffdf9;
+  --bg-surface-elevated: #f4ede2;
+  --text-main: #2d2621;
+  --text-muted: #786d63;
+  --border-soft: #e6ded4;
+}
+
+/* 3. Calm Dark: Soothing Charcoal Twilight (No blinding pitch-black) */
+html.theme-calm-dark {
+  --bg-primary: #121824;
+  --bg-surface: #1a2232;
+  --bg-surface-elevated: #242e42;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border-soft: #2a364d;
+}
+
+/* Smooth transitions for theme switches */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Disable transition on active dragging or animations */
+.no-transition, .no-transition * {
+  transition: none !important;
+}
