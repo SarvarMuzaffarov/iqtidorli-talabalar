@@ -107,6 +107,36 @@
         "status": { "type": "string" }
       },
       "required": ["id", "certificateNumber", "studentId"]
+    },
+    "Teacher": {
+      "title": "Teacher",
+      "description": "Filial o'qituvchilari va ilmiy rahbarlar bazasi",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "fullName": { "type": "string" },
+        "role": { "type": "string" },
+        "department": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "specialization": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "fullName", "department"]
+    },
+    "UserAccount": {
+      "title": "UserAccount",
+      "description": "Barcha tizim foydalanuvchilari va nazorat akkountlari",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "fullName": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string" },
+        "department": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "fullName", "email", "role"]
     }
   },
   "firestore": {
@@ -114,6 +144,8 @@
     "projects": { "entity": "Project" },
     "events": { "entity": "UniversityEvent" },
     "announcements": { "entity": "Announcement" },
-    "certificates": { "entity": "Certificate" }
+    "certificates": { "entity": "Certificate" },
+    "teachers": { "entity": "Teacher" },
+    "users": { "entity": "UserAccount" }
   }
 }

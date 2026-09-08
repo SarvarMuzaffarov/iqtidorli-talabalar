@@ -128,3 +128,34 @@ export interface ScoringRule {
   category: AchievementCategory;
   description: string;
 }
+
+export interface Teacher {
+  id: string;
+  fullName: string;
+  role: string; // e.g. "Dotsent, PhD", "Professor, DSc"
+  department: string; // Kafedra
+  faculty?: string;
+  phone: string;
+  email: string;
+  avatarUrl?: string;
+  specialization?: string; // Ilmiy yo'nalishi
+  assignedStudentIds?: string[];
+  status: 'active' | 'blocked';
+  createdAt?: string;
+}
+
+export interface UserAccount {
+  id: string;
+  fullName: string;
+  email: string;
+  phone?: string;
+  role: UserRole;
+  department?: string; // Kafedra yoki Guruh/Fakultet
+  title?: string; // e.g. "Professor, PhD", "Talaba, 4-kurs", "Bosh administrator"
+  status: 'active' | 'blocked';
+  avatarUrl?: string;
+  lastActive?: string;
+  createdAt: string;
+  studentId?: string;
+  teacherId?: string;
+}

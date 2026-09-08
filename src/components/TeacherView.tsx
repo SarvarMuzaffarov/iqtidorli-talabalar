@@ -19,31 +19,36 @@ import {
   Calendar,
   MessageSquare
 } from 'lucide-react';
-import { Student, Project, Achievement } from '../types';
+import { Student, Project, Achievement, Teacher } from '../types';
 import { INSTITUT_ILMIY_RAHBARLARI } from '../constants/filialData';
 
 interface TeacherViewProps {
   students: Student[];
   projects: Project[];
+  teachers?: Teacher[];
   onSelectStudent: (student: Student) => void;
   onSelectProject: (project: Project) => void;
   onVerifyAchievement: (studentId: string, achievementId: string, approved: boolean) => void;
   onUpdateRecommendation: (studentId: string, recommendation: string) => void;
   onAddProject: (project: Project) => void;
+  onOpenAddTeacher?: () => void;
 }
 
 export const TeacherView: React.FC<TeacherViewProps> = ({
   students = [],
   projects = [],
+  teachers = [],
   onSelectStudent,
   onSelectProject,
   onVerifyAchievement,
   onUpdateRecommendation,
   onAddProject,
+  onOpenAddTeacher,
 }) => {
-  // Extract all supervisor names from students and projects
+  // Extract all supervisor names from students, projects and teachers
   const supervisorList = Array.from(
     new Set([
+      ...teachers.map((t) => t.fullName),
       ...INSTITUT_ILMIY_RAHBARLARI.map((s) => s.name),
       'Prof. X. Muminov',
       'Dots. D. Azimov',
@@ -201,8 +206,17 @@ export const TeacherView: React.FC<TeacherViewProps> = ({
                 </option>
               ))}
             </select>
-            <div className="text-[11px] text-slate-400">
-              Biriktirilgan: <strong className="text-white">{assignedStudents.length} nafar iqtidorli talaba</strong>
+            <div className="text-[11px] text-slate-400 flex items-center justify-between gap-2">
+              <span>Biriktirilgan: <strong className="text-white">{assignedStudents.length} nafar talaba</strong></span>
+              {onOpenAddTeacher && (
+                <button
+                  id="teacher-view-add-new-btn"
+                  onClick={onOpenAddTeacher}
+                  className="text-indigo-400 hover:text-indigo-300 font-bold hover:underline"
+                >
+                  + Yangi Qo‘shish
+                </button>
+              )}
             </div>
           </div>
         </div>

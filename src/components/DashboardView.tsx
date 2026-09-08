@@ -14,7 +14,9 @@ import {
   ExternalLink,
   QrCode,
   GraduationCap,
-  Send
+  Send,
+  UserPlus,
+  ShieldCheck
 } from 'lucide-react';
 import { Student, Project, UniversityEvent, Announcement, Certificate, UserRole } from '../types';
 import { TktiyfLogo } from './TktiyfLogo';
@@ -30,6 +32,7 @@ interface DashboardViewProps {
   onSelectStudent: (student: Student) => void;
   onSelectProject?: (project: Project) => void;
   onOpenAddStudent?: () => void;
+  onOpenAddTeacher?: () => void;
   onOpenAddProject?: () => void;
   onOpenCreateEvent?: () => void;
   onOpenCreateAnnouncement?: () => void;
@@ -48,6 +51,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onSelectStudent,
   onSelectProject,
   onOpenAddStudent,
+  onOpenAddTeacher,
   onOpenAddProject,
   onOpenCreateEvent,
   onOpenCreateAnnouncement,
@@ -157,13 +161,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   ];
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 pb-12 w-full max-w-full overflow-hidden">
       {/* Platform Banner Header */}
-      <div className={`relative overflow-hidden rounded-2xl ${bannerClass} text-white p-6 sm:p-8 shadow-md flex items-center justify-between gap-6 transition-colors duration-150`}>
+      <div className={`relative overflow-hidden rounded-2xl ${bannerClass} text-white p-4 sm:p-6 lg:p-8 shadow-md flex items-center justify-between gap-6 transition-colors duration-150 w-full max-w-full`}>
         <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-sky-400/30 text-sky-300 text-xs font-semibold mb-3 shadow-xs">
+          <div className="inline-flex flex-wrap items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800/80 border border-sky-400/30 text-sky-300 text-[11px] sm:text-xs font-semibold mb-3 shadow-xs max-w-full">
             <TktiyfLogo size="xs" />
-            <span>Toshkent kimyo-texnologiya instituti Yangiyer filiali</span>
+            <span className="hidden sm:inline">Toshkent kimyo-texnologiya instituti Yangiyer filiali</span>
+            <span className="sm:hidden">TKTI Yangiyer filiali</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-2">
             TKTI Yangiyer Filiali TalentHub Platformasi
@@ -182,8 +187,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   onClick={() => onNavigateTab('superadmin_control')}
                   className="flex items-center gap-1.5 px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black rounded-lg transition shadow-sm"
                 >
-                  <Sparkles className="w-3.5 h-3.5 fill-current" />
-                  Tizim Sozlamalari & Nazorat
+                  <ShieldCheck className="w-3.5 h-3.5 fill-current" />
+                  Akkountlar & Nazorat
+                </button>
+                <button
+                  id="dash-add-teacher-btn"
+                  onClick={() => onOpenAddTeacher ? onOpenAddTeacher() : onNavigateTab('superadmin_control')}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition shadow-sm"
+                >
+                  <UserPlus className="w-3.5 h-3.5" />
+                  + O‘qituvchi qo‘shish
                 </button>
                 <button
                   id="dash-add-student-btn"
@@ -214,6 +227,22 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             {currentRole === 'admin' && (
               <>
+                <button
+                  id="dash-admin-control-btn"
+                  onClick={() => onNavigateTab('superadmin_control')}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black rounded-lg transition shadow-sm"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 fill-current" />
+                  Akkountlar & Nazorat
+                </button>
+                <button
+                  id="dash-admin-add-teacher-btn"
+                  onClick={() => onOpenAddTeacher ? onOpenAddTeacher() : onNavigateTab('superadmin_control')}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition shadow-sm"
+                >
+                  <UserPlus className="w-3.5 h-3.5" />
+                  + O‘qituvchi qo‘shish
+                </button>
                 <button
                   id="dash-add-student-btn"
                   onClick={() => onOpenAddStudent ? onOpenAddStudent() : onNavigateTab('students')}

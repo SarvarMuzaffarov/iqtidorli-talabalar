@@ -220,15 +220,15 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
   };
 
   return (
-    <div className="space-y-6 pb-16">
+    <div className="space-y-6 pb-16 w-full max-w-full overflow-hidden">
       
       {/* 1. STUDENT HERO PROFILE BANNER */}
-      <div className={`relative ${heroBannerClass} rounded-2xl p-6 sm:p-8 shadow-sm overflow-hidden transition-colors duration-150`}>
+      <div className={`relative ${heroBannerClass} rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm overflow-hidden transition-colors duration-150 w-full max-w-full`}>
         {/* Subtle decorative tone */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-sky-500/5 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
 
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 sm:gap-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 w-full">
             <div className="relative shrink-0">
               <UserAvatar
                 src={student.avatarUrl}
@@ -242,8 +242,8 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
               </span>
             </div>
 
-            <div className="space-y-1.5">
-              <div className="flex flex-wrap items-center gap-2">
+            <div className="space-y-1.5 min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                 <span className="px-2.5 py-0.5 rounded-md bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[11px] font-bold">
                   {student.studentIdNumber}
                 </span>
@@ -255,7 +255,7 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
                 </span>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight break-words">
                 {student.fullName}
               </h1>
 
@@ -263,31 +263,31 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
                 {student.faculty} • <span className="text-sky-300">{student.direction}</span>
               </p>
 
-              <div className="flex flex-wrap items-center gap-3 text-xs text-slate-300 pt-1">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-slate-300 pt-1">
                 <span>Ilmiy rahbar: <strong className="text-amber-300">{student.scientificSupervisor}</strong></span>
-                <span>•</span>
+                <span className="hidden sm:inline">•</span>
                 <span>Aloqa: <strong className="text-white">{student.phone}</strong></span>
               </div>
             </div>
           </div>
 
           {/* Points & Ranking Metric Card */}
-          <div className={`${heroMetricsClass} border rounded-2xl p-4 sm:p-5 flex md:flex-col items-center md:items-end justify-between w-full md:w-auto gap-3 shrink-0 shadow-inner`}>
+          <div className={`${heroMetricsClass} border rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row md:flex-col items-start sm:items-center md:items-end justify-between w-full md:w-auto gap-3 shrink-0 shadow-inner`}>
             <div>
               <div className="text-[11px] text-slate-300 font-bold uppercase tracking-wider text-left md:text-right">
                 Jami To‘plangan Ball
               </div>
-              <div className="text-3xl sm:text-4xl font-black text-amber-400 tracking-tight flex items-baseline gap-1 md:justify-end">
+              <div className="text-2xl sm:text-4xl font-black text-amber-400 tracking-tight flex items-baseline gap-1 md:justify-end">
                 {student.totalPoints}
                 <span className="text-xs font-semibold text-slate-300">ball</span>
               </div>
             </div>
             
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
               <button
                 id="student-add-achievement-quick-btn"
                 onClick={() => setNewAchievementModalOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition shadow-xs"
+                className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition shadow-xs flex-1 sm:flex-initial"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Yangi yutuq kiritish</span>
@@ -295,7 +295,7 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
               <button
                 id="student-add-project-quick-btn"
                 onClick={() => setNewProjectModalOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition shadow-xs"
+                className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition shadow-xs flex-1 sm:flex-initial"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Loyiha qo‘shish</span>
@@ -305,7 +305,7 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
         </div>
 
         {/* Competencies Tags */}
-        <div className="mt-6 pt-5 border-t border-slate-700/60 flex flex-wrap items-center gap-2">
+        <div className="mt-5 pt-4 sm:mt-6 sm:pt-5 border-t border-slate-700/60 flex flex-wrap items-center gap-2">
           <span className="text-xs text-slate-300 font-semibold mr-1">Kompetensiyalar:</span>
           {student.competencies?.map((c, i) => (
             <span key={i} className="px-2.5 py-1 rounded-lg bg-slate-800/80 text-slate-200 text-xs font-medium border border-slate-700/70">
@@ -322,11 +322,11 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
       </div>
 
       {/* 2. SECTION NAVIGATION TABS */}
-      <div className={`flex items-center gap-2 overflow-x-auto pb-1 border-b ${tabContainerBorder} scrollbar-none`}>
+      <div className={`flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-2 border-b ${tabContainerBorder} scrollbar-none w-full max-w-full`}>
         <button
           id="student-tab-projects"
           onClick={() => setActiveSection('projects')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${getTabClass(activeSection === 'projects')}`}
+          className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${getTabClass(activeSection === 'projects')}`}
         >
           <Lightbulb className="w-4 h-4" />
           <span>Mening Loyihalarim</span>
@@ -338,7 +338,7 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
         <button
           id="student-tab-achievements"
           onClick={() => setActiveSection('achievements')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${getTabClass(activeSection === 'achievements')}`}
+          className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${getTabClass(activeSection === 'achievements')}`}
         >
           <Trophy className="w-4 h-4" />
           <span>Erishgan Yutuqlarim</span>
@@ -350,7 +350,7 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
         <button
           id="student-tab-certificates"
           onClick={() => setActiveSection('certificates')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${getTabClass(activeSection === 'certificates')}`}
+          className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${getTabClass(activeSection === 'certificates')}`}
         >
           <Award className="w-4 h-4" />
           <span>Sertifikatlarim & QR</span>

@@ -1,4 +1,4 @@
-import { Student, Project, UniversityEvent, Announcement, Certificate, ScoringRule } from './types';
+import { Student, Project, UniversityEvent, Announcement, Certificate, ScoringRule, Teacher, UserAccount } from './types';
 
 export const SCORING_RULES: ScoringRule[] = [
   { activity: "Respublika tanlovida 1-o'rin", points: 100, category: 'tanlov', description: "Respublika bosqichidagi ko'rik-tanlovlarda 1-o'rin" },
@@ -544,5 +544,245 @@ export const INITIAL_CERTIFICATES: Certificate[] = [
     signatory: 'Prof. U. Nigmatov',
     signatoryTitle: 'TKTI Ilmiy ishlar va innovatsiyalar bo‘yicha prorektori',
     status: 'valid'
+  }
+];
+
+export const INITIAL_TEACHERS: Teacher[] = [
+  {
+    id: 'teacher-1',
+    fullName: 'Prof. X. Muminov',
+    role: 'Professor, DSc',
+    department: 'Oziq-ovqat va biotexnologiya kafedrasi',
+    faculty: 'Oziq-ovqat texnologiyalari',
+    phone: '+998 90 234 56 78',
+    email: 'x.muminov@tktiyf.uz',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+    specialization: 'Biotexnologik jarayonlar, tabiiy birikmalar sintezi, mikroorganizmlar seleksiyasi',
+    assignedStudentIds: ['stud-1'],
+    status: 'active',
+    createdAt: '2025-09-01'
+  },
+  {
+    id: 'teacher-2',
+    fullName: 'Dots. D. Azimov',
+    role: 'Dotsent, PhD',
+    department: 'Kompyuter injiniringi va AI kafedrasi',
+    faculty: 'Axborot texnologiyalari va avtomatlashtirish',
+    phone: '+998 91 345 67 89',
+    email: 'd.azimov@tktiyf.uz',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+    specialization: 'Sun\'iy intellekt tizimlari, kompyuter ko\'rish, IoT datchiklar integratsiyasi',
+    assignedStudentIds: ['stud-5'],
+    status: 'active',
+    createdAt: '2025-09-01'
+  },
+  {
+    id: 'teacher-3',
+    fullName: 'Prof. S. Normatov',
+    role: 'Professor, DSc',
+    department: 'Kimyo muhandisligi va neft-gaz',
+    faculty: 'Kimyoviy texnologiya',
+    phone: '+998 93 456 78 90',
+    email: 's.normatov@tktiyf.uz',
+    specialization: 'Neft-gazni qayta ishlash, organik polimer kompozitsiyalari',
+    assignedStudentIds: ['stud-3'],
+    status: 'active',
+    createdAt: '2025-09-01'
+  },
+  {
+    id: 'teacher-4',
+    fullName: 'Dots. R. Ergashev',
+    role: 'Dotsent, PhD',
+    department: 'Avtomatlashtirish va energetika',
+    faculty: 'Muhandislik va energetika',
+    phone: '+998 94 567 89 01',
+    email: 'r.ergashev@tktiyf.uz',
+    specialization: 'Qayta tiklanuvchi energiya manbalari, sanoat avtomatlashtirish tizimlari',
+    assignedStudentIds: [],
+    status: 'active',
+    createdAt: '2025-09-01'
+  },
+  {
+    id: 'teacher-5',
+    fullName: 'Dots. O.X. Ergashev',
+    role: 'Dotsent, PhD',
+    department: 'Qishloq xo‘jaligi va agronomik fanlar',
+    faculty: 'Agrokimyo va tuproqshunoslik',
+    phone: '+998 97 678 90 12',
+    email: 'ox.ergashev@tktiyf.uz',
+    specialization: 'Agrobiotexnologiyalar, tuproq unumdorligini oshirish preparatlari',
+    assignedStudentIds: ['stud-4'],
+    status: 'active',
+    createdAt: '2025-09-01'
+  },
+  {
+    id: 'teacher-6',
+    fullName: 'Katta o‘qituvchi M. Qodirov',
+    role: 'Katta o‘qituvchi',
+    department: 'Iqtisodiyot va menejment kafedrasi',
+    faculty: 'Menejment va marketing',
+    phone: '+998 90 789 01 23',
+    email: 'm.qodirov@tktiyf.uz',
+    specialization: 'Innovatsion startaplar moliyalashtirilishi, texnoparklar ekotizimi',
+    assignedStudentIds: [],
+    status: 'active',
+    createdAt: '2025-09-01'
+  },
+  {
+    id: 'teacher-7',
+    fullName: 'Dots. N. Yusupova',
+    role: 'Dotsent, PhD',
+    department: 'Atrof-muhit muhandisligi va ekologiya',
+    faculty: 'Kimyoviy texnologiya',
+    phone: '+998 91 890 12 34',
+    email: 'n.yusupova@tktiyf.uz',
+    specialization: 'Chiqindilarni qayta ishlash, yashil kimyo, biosorbents',
+    assignedStudentIds: ['stud-2'],
+    status: 'active',
+    createdAt: '2025-09-01'
+  }
+];
+
+export const INITIAL_ACCOUNTS: UserAccount[] = [
+  {
+    id: 'acc-superadmin',
+    fullName: 'Rektorat Mas’uli (Super Administrator)',
+    email: 'admin@tktiyf.uz',
+    phone: '+998 90 111 22 33',
+    role: 'super_admin',
+    department: 'TKTI Yangiyer filiali Rektorati',
+    title: 'Bosh nazoratchi & Rektorat vakili',
+    status: 'active',
+    lastActive: 'Hozir online',
+    createdAt: '2025-08-01'
+  },
+  {
+    id: 'acc-admin',
+    fullName: 'Iqtidorli Yoshlar Bo‘limi Boshlig‘i',
+    email: 'iqtidor@tktiyf.uz',
+    phone: '+998 90 222 33 44',
+    role: 'admin',
+    department: 'Iqtidorli talabalar bilan ishlash bo‘limi',
+    title: 'Bo‘lim koordinatori',
+    status: 'active',
+    lastActive: '10 daqiqa oldin',
+    createdAt: '2025-08-15'
+  },
+  {
+    id: 'acc-teacher-1',
+    fullName: 'Prof. X. Muminov',
+    email: 'x.muminov@tktiyf.uz',
+    phone: '+998 90 234 56 78',
+    role: 'teacher',
+    department: 'Oziq-ovqat va biotexnologiya kafedrasi',
+    title: 'Professor, DSc (Ilmiy rahbar)',
+    status: 'active',
+    teacherId: 'teacher-1',
+    lastActive: 'Bugun, 09:15',
+    createdAt: '2025-09-01'
+  },
+  {
+    id: 'acc-teacher-2',
+    fullName: 'Dots. D. Azimov',
+    email: 'd.azimov@tktiyf.uz',
+    phone: '+998 91 345 67 89',
+    role: 'teacher',
+    department: 'Kompyuter injiniringi va AI kafedrasi',
+    title: 'Dotsent, PhD (Ilmiy rahbar)',
+    status: 'active',
+    teacherId: 'teacher-2',
+    lastActive: 'Bugun, 10:45',
+    createdAt: '2025-09-01'
+  },
+  {
+    id: 'acc-teacher-3',
+    fullName: 'Prof. S. Normatov',
+    email: 's.normatov@tktiyf.uz',
+    phone: '+998 93 456 78 90',
+    role: 'teacher',
+    department: 'Kimyo muhandisligi va neft-gaz',
+    title: 'Professor, DSc',
+    status: 'active',
+    teacherId: 'teacher-3',
+    lastActive: 'Kecha, 17:30',
+    createdAt: '2025-09-01'
+  },
+  {
+    id: 'acc-teacher-5',
+    fullName: 'Dots. O.X. Ergashev',
+    email: 'ox.ergashev@tktiyf.uz',
+    phone: '+998 97 678 90 12',
+    role: 'teacher',
+    department: 'Qishloq xo‘jaligi va agronomik fanlar',
+    title: 'Dotsent, PhD',
+    status: 'active',
+    teacherId: 'teacher-5',
+    lastActive: 'Bugun, 08:30',
+    createdAt: '2025-09-01'
+  },
+  {
+    id: 'acc-stud-1',
+    fullName: 'Aliyev Ali Valijon o‘g‘li',
+    email: 'ali.aliyev@tkti.uz',
+    phone: '+998 90 123 45 67',
+    role: 'student',
+    department: 'Oziq-ovqat sanoati mashinalari va apparatlari (4-kurs)',
+    title: 'Iqtidorli talaba (985 ball, 1-o‘rin)',
+    status: 'active',
+    studentId: 'stud-1',
+    lastActive: 'Hozir online',
+    createdAt: '2025-09-01'
+  },
+  {
+    id: 'acc-stud-2',
+    fullName: 'Axmedova Madina Baxtiyor qizi',
+    email: 'madina.axmedova@tkti.uz',
+    phone: '+998 91 234 56 78',
+    role: 'student',
+    department: 'Yoqilg‘i va organik birikmalar (3-kurs)',
+    title: 'Iqtidorli talaba (820 ball, 2-o‘rin)',
+    status: 'active',
+    studentId: 'stud-2',
+    lastActive: 'Bugun, 11:20',
+    createdAt: '2025-09-01'
+  },
+  {
+    id: 'acc-stud-3',
+    fullName: 'Karimov Vali Sherzod o‘g‘li',
+    email: 'vali.karimov@tkti.uz',
+    phone: '+998 93 345 67 89',
+    role: 'student',
+    department: 'Neft va gazni qayta ishlash (3-kurs)',
+    title: 'Iqtidorli talaba (750 ball, 3-o‘rin)',
+    status: 'active',
+    studentId: 'stud-3',
+    lastActive: 'Kecha, 18:00',
+    createdAt: '2025-09-01'
+  },
+  {
+    id: 'acc-stud-4',
+    fullName: 'Saidova Nilufar Ilhom qizi',
+    email: 'nilufar.saidova@tkti.uz',
+    phone: '+998 94 456 78 90',
+    role: 'student',
+    department: 'Biotexnologiya (2-kurs)',
+    title: 'Iqtidorli talaba (640 ball, 4-o‘rin)',
+    status: 'active',
+    studentId: 'stud-4',
+    lastActive: 'Bugun, 09:40',
+    createdAt: '2025-09-01'
+  },
+  {
+    id: 'acc-stud-5',
+    fullName: 'Yusupov Jamshid Otabek o‘g‘li',
+    email: 'jamshid.yusupov@tkti.uz',
+    phone: '+998 97 567 89 01',
+    role: 'student',
+    department: 'Kompyuter injiniringi va AI (1-kurs)',
+    title: 'Iqtidorli talaba (580 ball, 5-o‘rin)',
+    status: 'active',
+    studentId: 'stud-5',
+    lastActive: 'Bugun, 10:10',
+    createdAt: '2025-09-01'
   }
 ];

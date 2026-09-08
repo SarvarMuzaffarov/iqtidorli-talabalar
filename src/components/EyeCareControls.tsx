@@ -142,17 +142,17 @@ export const EyeCareControls: React.FC<EyeCareControlsProps> = ({
       <button
         id="eyecare-toggle-btn"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 text-emerald-300 hover:text-emerald-200 border border-emerald-500/30 text-xs font-semibold shadow-xs transition"
+        className="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 text-emerald-300 hover:text-emerald-200 border border-emerald-500/30 text-xs font-semibold shadow-xs transition shrink-0"
         title="Ko‘z himoyasi va qulay ko‘rinish sozlamalari"
       >
-        <Eye className="w-4 h-4 text-emerald-400" />
-        <span className="hidden sm:inline">Ko‘z himoyasi</span>
-        <span className="w-2 h-2 rounded-full bg-emerald-400" />
+        <Eye className="w-4 h-4 text-emerald-400 shrink-0" />
+        <span className="hidden md:inline">Ko‘z himoyasi</span>
+        <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
       </button>
 
       {/* Popover Panel */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl z-50 p-4 text-slate-800 dark:text-slate-100 animate-in fade-in slide-in-from-top-2 duration-150">
+        <div className="fixed sm:absolute left-3 right-3 sm:left-auto sm:right-0 mt-2 sm:w-80 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl z-50 p-4 text-slate-800 dark:text-slate-100 animate-in fade-in slide-in-from-top-2 duration-150 max-w-[calc(100vw-1.5rem)]">
           
           {/* Header */}
           <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">

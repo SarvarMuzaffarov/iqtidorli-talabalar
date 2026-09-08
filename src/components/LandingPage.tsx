@@ -11,12 +11,10 @@ import {
   ShieldCheck, 
   CheckCircle2, 
   Users, 
-  FileText, 
   ArrowRight,
   Sparkles,
   ExternalLink,
-  Send,
-  Eye
+  Send
 } from 'lucide-react';
 import { Student, Project, UniversityEvent, Certificate } from '../types';
 import { TktiyfLogo } from './TktiyfLogo';
@@ -96,17 +94,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     <div className={`min-h-screen flex flex-col font-sans transition-colors duration-200 ${containerClass}`}>
       
       {/* Top Navigation Bar */}
-      <header className={`sticky top-0 z-40 backdrop-blur-md border-b shadow-xs transition-colors duration-200 ${headerClass}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 gap-3">
+      <header className={`sticky top-0 z-40 backdrop-blur-md border-b shadow-xs transition-colors duration-200 w-full max-w-full overflow-hidden ${headerClass}`}>
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 gap-2 sm:gap-3">
             
             {/* Official TKTI Yangiyer filiali Logo */}
-            <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               <TktiyfLogo size="md" />
               <div>
                 <div className="flex items-center gap-1.5">
                   <span className="font-extrabold text-sm sm:text-base tracking-tight">
-                    TKTI Yangiyer filiali
+                    <span className="sm:hidden">TKTIYF</span>
+                    <span className="hidden sm:inline">TKTI Yangiyer filiali</span>
                   </span>
                   <span className="text-[10px] bg-amber-500/15 text-amber-700 dark:text-amber-300 font-bold px-1.5 py-0.5 rounded border border-amber-500/30">
                     TalentHub
@@ -119,7 +118,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
 
             {/* Right Action buttons */}
-            <div className="flex items-center gap-2 sm:gap-2.5">
+            <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
               
               {/* Eye-Care Quick Controls */}
               <EyeCareControls variant="button" />
@@ -137,15 +136,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <span>@yosh_olimlar_tktiyf</span>
               </a>
 
-              {/* QR Verification Button (Public) */}
+              {/* QR Verification Button (Public - Visible on tablet/desktop, Hero has full button on mobile) */}
               <button
                 id="landing-verify-btn"
                 onClick={onOpenVerify}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition"
                 title="Sertifikat haqiqiyligini tekshirish"
               >
                 <QrCode className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span className="hidden sm:inline">QR Tekshirish</span>
+                <span>QR Tekshirish</span>
               </button>
 
               {/* Ro'yxatdan o'tish */}
@@ -162,7 +161,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <button
                 id="landing-login-btn"
                 onClick={onOpenLogin}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold shadow-sm transition active:scale-95"
+                className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold shadow-sm transition active:scale-95 shrink-0"
               >
                 <LogIn className="w-3.5 h-3.5" />
                 <span>Kirish</span>
@@ -174,54 +173,45 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1">
+      <main className="flex-1 w-full max-w-full overflow-hidden">
         
         {/* Eye-Friendly Hero Section */}
-        <section className="relative pt-12 pb-16 lg:pt-16 lg:pb-24 border-b border-slate-200/70 dark:border-slate-800">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <section className="relative pt-8 pb-12 sm:pt-12 sm:pb-16 lg:pt-16 lg:pb-24 border-b border-slate-200/70 dark:border-slate-800 w-full max-w-full overflow-hidden">
+          <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 text-center relative z-10">
             
-            {/* Institute Tag & Eye-Care Badge */}
-            <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
-              <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-medium shadow-xs ${subtlePillClass}`}>
+            {/* Institute Tag & Official Links */}
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-6 max-w-full">
+              <div className={`inline-flex flex-wrap items-center justify-center gap-1.5 px-3 py-1.5 rounded-2xl sm:rounded-full border text-[11px] sm:text-xs font-medium shadow-xs max-w-full text-center ${subtlePillClass}`}>
                 <TktiyfLogo size="xs" />
-                <span>Oliy ta’lim, fan va innovatsiyalar vazirligi</span>
-                <span className="text-slate-400">•</span>
+                <span className="hidden sm:inline">Oliy ta’lim, fan va innovatsiyalar vazirligi</span>
+                <span className="sm:hidden font-semibold">OTFIV</span>
+                <span className="opacity-40">•</span>
                 <span className="font-bold text-sky-700 dark:text-sky-300">TKTI Yangiyer filiali</span>
-              </div>
-
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-800 dark:text-emerald-300 text-xs font-semibold shadow-xs">
-                <Eye className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                <span>Ko‘zga bezarar sokin grafik & dizayn</span>
               </div>
 
               <a
                 href="https://t.me/yosh_olimlar_tktiyf"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-500/10 hover:bg-sky-500/20 border border-sky-400/30 text-sky-800 dark:text-sky-300 text-xs font-bold shadow-xs transition"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-500/10 hover:bg-sky-500/20 border border-sky-400/30 text-sky-800 dark:text-sky-300 text-[11px] sm:text-xs font-bold shadow-xs transition"
               >
-                <Send className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
-                <span>Telegram: @yosh_olimlar_tktiyf</span>
-                <ExternalLink className="w-3 h-3 ml-0.5 text-sky-500" />
+                <Send className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 shrink-0" />
+                <span className="sm:hidden">@yosh_olimlar_tktiyf</span>
+                <span className="hidden sm:inline">Telegram: @yosh_olimlar_tktiyf</span>
+                <ExternalLink className="w-3 h-3 ml-0.5 text-sky-500 shrink-0" />
               </a>
             </div>
 
             {/* Main Headline with Soothing, High-Legibility Typography */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight max-w-4xl mx-auto mb-5">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-snug sm:leading-tight max-w-4xl mx-auto mb-7 break-words">
               Iqtidorli talabalarni boshqarish va{' '}
-              <span className="text-sky-700 dark:text-sky-400 underline decoration-sky-400/40 underline-offset-8">
+              <span className="text-sky-700 dark:text-sky-400 underline decoration-sky-400/40 underline-offset-8 inline-block">
                 rag‘batlantirish platformasi
               </span>
             </h1>
 
-            {/* Subtitle */}
-            <p className={`text-sm sm:text-base max-w-3xl mx-auto mb-9 leading-relaxed ${textMutedClass}`}>
-              Talaba bir marta ro‘yxatdan o‘tadi → 4 yillik yagona portfoliosi shakllanadi → yutuqlari, startap loyihalari,
-              ilmiy maqolalari va QR-kodli sertifikatlari ko‘zga qulay bitta tizimda boshqariladi.
-            </p>
-
             {/* Primary Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2.5 sm:gap-3 mb-10 w-full max-w-sm sm:max-w-none mx-auto">
               <button
                 id="hero-login-cta"
                 onClick={onOpenLogin}
@@ -252,38 +242,38 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
 
             {/* Quick Metrics Bar in Eye-Friendly Cards - Faqat mavjud bo'lgan aniq ma'lumotlar */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 max-w-4xl mx-auto w-full">
               
-              <div className={`p-4 rounded-xl border text-center transition ${cardClass}`}>
-                <div className="text-2xl sm:text-3xl font-extrabold text-sky-700 dark:text-sky-400 mb-0.5">
+              <div className={`p-3 sm:p-4 rounded-xl border text-center transition ${cardClass}`}>
+                <div className="text-xl sm:text-3xl font-extrabold text-sky-700 dark:text-sky-400 mb-0.5">
                   {actualStudentsCount}
                 </div>
-                <div className={`text-xs font-semibold ${textMutedClass}`}>Iqtidorli talabalar</div>
-                <div className="text-[10px] opacity-65 mt-0.5">Bazada ro‘yxatda</div>
+                <div className={`text-[11px] sm:text-xs font-semibold ${textMutedClass}`}>Iqtidorli talabalar</div>
+                <div className="text-[9px] sm:text-[10px] opacity-65 mt-0.5">Bazada ro‘yxatda</div>
               </div>
 
-              <div className={`p-4 rounded-xl border text-center transition ${cardClass}`}>
-                <div className="text-2xl sm:text-3xl font-extrabold text-amber-700 dark:text-amber-400 mb-0.5">
+              <div className={`p-3 sm:p-4 rounded-xl border text-center transition ${cardClass}`}>
+                <div className="text-xl sm:text-3xl font-extrabold text-amber-700 dark:text-amber-400 mb-0.5">
                   {actualProjectsCount}
                 </div>
-                <div className={`text-xs font-semibold ${textMutedClass}`}>Startap va loyihalar</div>
-                <div className="text-[10px] opacity-65 mt-0.5">Institut ishlanmalari</div>
+                <div className={`text-[11px] sm:text-xs font-semibold ${textMutedClass}`}>Startap va loyihalar</div>
+                <div className="text-[9px] sm:text-[10px] opacity-65 mt-0.5">Institut ishlanmalari</div>
               </div>
 
-              <div className={`p-4 rounded-xl border text-center transition ${cardClass}`}>
-                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-700 dark:text-emerald-400 mb-0.5">
+              <div className={`p-3 sm:p-4 rounded-xl border text-center transition ${cardClass}`}>
+                <div className="text-xl sm:text-3xl font-extrabold text-emerald-700 dark:text-emerald-400 mb-0.5">
                   {actualCertificatesCount}
                 </div>
-                <div className={`text-xs font-semibold ${textMutedClass}`}>QR-kodli sertifikatlar</div>
-                <div className="text-[10px] opacity-65 mt-0.5">Berilgan va tekshirilgan</div>
+                <div className={`text-[11px] sm:text-xs font-semibold ${textMutedClass}`}>QR-kodli sertifikatlar</div>
+                <div className="text-[9px] sm:text-[10px] opacity-65 mt-0.5">Berilgan va tekshirilgan</div>
               </div>
 
-              <div className={`p-4 rounded-xl border text-center transition ${cardClass}`}>
-                <div className="text-2xl sm:text-3xl font-extrabold text-indigo-700 dark:text-indigo-400 mb-0.5">
+              <div className={`p-3 sm:p-4 rounded-xl border text-center transition ${cardClass}`}>
+                <div className="text-xl sm:text-3xl font-extrabold text-indigo-700 dark:text-indigo-400 mb-0.5">
                   {actualArticlesCount}
                 </div>
-                <div className={`text-xs font-semibold ${textMutedClass}`}>Ilmiy maqolalar (Scopus/OAK)</div>
-                <div className="text-[10px] opacity-65 mt-0.5">Nashr etilgan ishlar</div>
+                <div className={`text-[11px] sm:text-xs font-semibold ${textMutedClass}`}>Ilmiy maqolalar (Scopus/OAK)</div>
+                <div className="text-[9px] sm:text-[10px] opacity-65 mt-0.5">Nashr etilgan ishlar</div>
               </div>
 
             </div>
@@ -368,19 +358,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 </h3>
                 <p className={`text-xs leading-relaxed ${textMutedClass}`}>
                   Institut xakatonlari, seminarlari va tanlovlariga talabalar bir bosishda ro‘yxatdan o‘tadi; ishtirokchilar ro‘yxati avtomatik shakllanadi.
-                </p>
-              </div>
-
-              {/* Feature 6 */}
-              <div className={`p-5 rounded-2xl border transition ${cardClass}`}>
-                <div className="w-10 h-10 rounded-xl bg-teal-500/10 text-teal-700 dark:text-teal-400 flex items-center justify-center mb-3.5 border border-teal-500/20">
-                  <FileText className="w-5 h-5" />
-                </div>
-                <h3 className="text-sm sm:text-base font-bold mb-1.5">
-                  Vazirlik uchun 1-klikda hisobot
-                </h3>
-                <p className={`text-xs leading-relaxed ${textMutedClass}`}>
-                  Fakultetlar bo‘yicha iqtidorli talabalar ko‘rsatkichlari, maqolalar va startaplar ro‘yxatini rasmiy hisobot formatida yuklab olish.
                 </p>
               </div>
 

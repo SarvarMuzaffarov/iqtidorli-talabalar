@@ -31,7 +31,9 @@ import {
   Certificate, 
   UserRole, 
   Achievement,
-  ScoringRule
+  ScoringRule,
+  Teacher,
+  UserAccount
 } from './types';
 import { 
   loadFromStorage, 
@@ -44,6 +46,8 @@ import {
   INITIAL_EVENTS, 
   INITIAL_ANNOUNCEMENTS, 
   INITIAL_CERTIFICATES,
+  INITIAL_TEACHERS,
+  INITIAL_ACCOUNTS,
   SCORING_RULES
 } from './mockData';
 import { 
@@ -53,6 +57,12 @@ import {
   saveEventToFirestore,
   saveAnnouncementToFirestore,
   saveCertificateToFirestore,
+  saveTeacherToFirestore,
+  deleteTeacherFromFirestore,
+  subscribeToTeachers,
+  saveAccountToFirestore,
+  deleteAccountFromFirestore,
+  subscribeToAccounts,
   subscribeToStudents,
   subscribeToProjects,
   subscribeToEvents,
@@ -60,6 +70,7 @@ import {
   subscribeToCertificates
 } from './lib/firestoreService';
 import { FirebaseStatusModal } from './components/FirebaseStatusModal';
+import { AddTeacherModal } from './components/AddTeacherModal';
 
 export default function App() {
   const { mode } = useEyeCare();
@@ -79,6 +90,12 @@ export default function App() {
   );
   const [certificates, setCertificates] = useState<Certificate[]>(() => 
     loadFromStorage<Certificate[]>(STORAGE_KEYS.CERTIFICATES, INITIAL_CERTIFICATES)
+  );
+  const [teachers, setTeachers] = useState<Teacher[]>(() => 
+    loadFromStorage<Teacher[]>(STORAGE_KEYS.TEACHERS, INITIAL_TEACHERS)
+  );
+  const [accounts, setAccounts] = useState<UserAccount[]>(() => 
+    loadFromStorage<UserAccount[]>(STORAGE_KEYS.ACCOUNTS, INITIAL_ACCOUNTS)
   );
   const [scoringRules, setScoringRules] = useState<ScoringRule[]>(() => 
     loadFromStorage<ScoringRule[]>(STORAGE_KEYS.RULES, SCORING_RULES)
@@ -114,6 +131,7 @@ export default function App() {
   const [verifyModalOpen, setVerifyModalOpen] = useState(false);
   const [verifyInitialNumber, setVerifyInitialNumber] = useState<string>('');
   const [addStudentModalOpen, setAddStudentModalOpen] = useState(false);
+  const [addTeacherModalOpen, setAddTeacherModalOpen] = useState(false);
   const [firebaseModalOpen, setFirebaseModalOpen] = useState(false);
   const [preselectedEventForCert, setPreselectedEventForCert] = useState<string>('');
   const [globalSearchQuery, setGlobalSearchQuery] = useState('');
@@ -126,7 +144,9 @@ export default function App() {
       INITIAL_PROJECTS,
       INITIAL_EVENTS,
       INITIAL_ANNOUNCEMENTS,
-      INITIAL_CERTIFICATES
+      INITIAL_CERTIFICATES,
+      INITIAL_TEACHERS,
+      INITIAL_ACCOUNTS
     ).then((res) => {
       if (res && isMounted) {
         if (res.students && res.students.length > 0) setStudents(res.students);
@@ -134,6 +154,8 @@ export default function App() {
         if (res.events && res.events.length > 0) setEvents(res.events);
         if (res.announcements && res.announcements.length > 0) setAnnouncements(res.announcements);
         if (res.certificates && res.certificates.length > 0) setCertificates(res.certificates);
+        if (res.teachers && res.teachers.length > 0) setTeachers(res.teachers);
+        if (res.accounts && res.accounts.length > 0) setAccounts(res.accounts);
       }
     });
 
@@ -153,6 +175,12 @@ export default function App() {
     const unsubCertificates = subscribeToCertificates((liveCertificates) => {
       if (isMounted) setCertificates(liveCertificates);
     });
+    const unsubTeachers = subscribeToTeachers((liveTeachers) => {
+      if (isMounted && liveTeachers.length > 0) setTeachers(liveTeachers);
+    });
+    const unsubAccounts = subscribeToAccounts((liveAccounts) => {
+      if (isMounted && liveAccounts.length > 0) setAccounts(liveAccounts);
+    });
 
     return () => { 
       isMounted = false; 
@@ -161,6 +189,8 @@ export default function App() {
       unsubEvents();
       unsubAnnouncements();
       unsubCertificates();
+      unsubTeachers();
+      unsubAccounts();
     };
   }, []);
 
@@ -184,6 +214,14 @@ export default function App() {
   useEffect(() => {
     saveToStorage(STORAGE_KEYS.CERTIFICATES, certificates);
   }, [certificates]);
+
+  useEffect(() => {
+    saveToStorage(STORAGE_KEYS.TEACHERS, teachers);
+  }, [teachers]);
+
+  useEffect(() => {
+    saveToStorage(STORAGE_KEYS.ACCOUNTS, accounts);
+  }, [accounts]);
 
   useEffect(() => {
     saveToStorage(STORAGE_KEYS.RULES, scoringRules);
@@ -371,6 +409,38 @@ export default function App() {
     setVerifyModalOpen(true);
   };
 
+  // Handler: Add Teacher & Associated Account
+  const handleAddTeacher = (newTeacher: Teacher, newAccount: UserAccount) => {
+    setTeachers((prev) => [newTeacher, ...prev]);
+    setAccounts((prev) => [newAccount, ...prev]);
+    saveTeacherToFirestore(newTeacher);
+    saveAccountToFirestore(newAccount);
+  };
+
+  // Handler: Update Teacher
+  const handleUpdateTeacher = (updatedTeacher: Teacher) => {
+    setTeachers((prev) => prev.map((t) => (t.id === updatedTeacher.id ? updatedTeacher : t)));
+    saveTeacherToFirestore(updatedTeacher);
+  };
+
+  // Handler: Delete Teacher
+  const handleDeleteTeacher = (teacherId: string) => {
+    setTeachers((prev) => prev.filter((t) => t.id !== teacherId));
+    deleteTeacherFromFirestore(teacherId);
+  };
+
+  // Handler: Update User Account
+  const handleUpdateAccount = (updatedAccount: UserAccount) => {
+    setAccounts((prev) => prev.map((a) => (a.id === updatedAccount.id ? updatedAccount : a)));
+    saveAccountToFirestore(updatedAccount);
+  };
+
+  // Handler: Delete User Account
+  const handleDeleteAccount = (accountId: string) => {
+    setAccounts((prev) => prev.filter((a) => a.id !== accountId));
+    deleteAccountFromFirestore(accountId);
+  };
+
   // Handler: Role change with automatic view routing
   const handleRoleChange = (role: UserRole) => {
     setCurrentRole(role);
@@ -511,7 +581,7 @@ export default function App() {
     : 'bg-[#f8fafc] text-slate-800';
 
   return (
-    <div className={`min-h-screen ${authThemeClass} flex flex-col font-sans antialiased selection:bg-sky-500 selection:text-white transition-colors duration-150`}>
+    <div className={`min-h-screen ${authThemeClass} flex flex-col font-sans antialiased selection:bg-sky-500 selection:text-white transition-colors duration-150 w-full max-w-full overflow-x-hidden`}>
       
       {/* Top Navbar */}
       <Navbar
@@ -526,6 +596,7 @@ export default function App() {
         onOpenVerifyModal={() => handleOpenVerifyWithNumber()}
         onOpenFirebaseStatus={() => setFirebaseModalOpen(true)}
         onOpenAddStudent={() => setAddStudentModalOpen(true)}
+        onOpenAddTeacher={() => setAddTeacherModalOpen(true)}
         onLogout={handleLogout}
         unreadAnnouncementsCount={announcements.filter((a) => a.urgent).length}
         searchQuery={globalSearchQuery}
@@ -556,7 +627,7 @@ export default function App() {
       />
 
       {/* Main View Container */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 overflow-x-hidden">
         
         {/* VIEW 1: TALABA MAXSUS SHAXSIY KABINETI & PORTFOLIOSI */}
         {activeTab === 'student_portal' && currentActiveStudent && (
@@ -580,11 +651,13 @@ export default function App() {
           <TeacherView
             students={students}
             projects={projects}
+            teachers={teachers}
             onSelectStudent={(student) => setSelectedStudent(student)}
             onSelectProject={(project) => setSelectedProject(project)}
             onVerifyAchievement={handleVerifyAchievement}
             onUpdateRecommendation={handleUpdateRecommendation}
             onAddProject={handleAddProject}
+            onOpenAddTeacher={() => setAddTeacherModalOpen(true)}
           />
         )}
 
@@ -597,6 +670,14 @@ export default function App() {
             projects={projects}
             events={events}
             certificates={certificates}
+            teachers={teachers}
+            accounts={accounts}
+            onAddTeacher={handleAddTeacher}
+            onUpdateTeacher={handleUpdateTeacher}
+            onDeleteTeacher={handleDeleteTeacher}
+            onUpdateAccount={handleUpdateAccount}
+            onDeleteAccount={handleDeleteAccount}
+            currentRole={currentRole}
             onExportReport={handleExportReport}
           />
         )}
@@ -614,6 +695,7 @@ export default function App() {
             onSelectProject={(project) => setSelectedProject(project)}
             onNavigateTab={(tab) => setActiveTab(tab)}
             onOpenAddStudent={() => setAddStudentModalOpen(true)}
+            onOpenAddTeacher={() => setAddTeacherModalOpen(true)}
             onOpenCreateEvent={() => setActiveTab('events')}
             onOpenIssueCertificate={() => setActiveTab('certificates')}
             onOpenCreateAnnouncement={() => setActiveTab('announcements')}
@@ -802,6 +884,16 @@ export default function App() {
           isOpen={addStudentModalOpen}
           onClose={() => setAddStudentModalOpen(false)}
           onAddStudent={handleAddStudent}
+        />
+      )}
+
+      {/* 5b. Add New Teacher Modal */}
+      {addTeacherModalOpen && (
+        <AddTeacherModal
+          isOpen={addTeacherModalOpen}
+          onClose={() => setAddTeacherModalOpen(false)}
+          onAddTeacher={handleAddTeacher}
+          students={students}
         />
       )}
 

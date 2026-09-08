@@ -108,24 +108,24 @@ export const RatingView: React.FC<RatingViewProps> = ({
       </div>
 
       {/* Filters bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200/90 shadow-2xs flex flex-wrap items-center justify-between gap-3 text-xs">
-        <div className="relative flex-1 min-w-[200px]">
+      <div className="bg-white p-4 rounded-xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs">
+        <div className="relative w-full sm:flex-1 min-w-0">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Talaba F.I.Sh. bo‘yicha qidiruv..."
-            className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-sky-500"
+            className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-sky-500 text-xs"
           />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           <select
             value={selectedFaculty}
             onChange={(e) => setSelectedFaculty(e.target.value)}
             aria-label="Fakultet filtri"
-            className="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 text-slate-700 font-medium focus:outline-none focus:border-sky-500"
+            className="flex-1 sm:flex-initial bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 text-slate-700 font-medium focus:outline-none focus:border-sky-500 text-xs"
           >
             <option value="all">Barcha fakultetlar</option>
             {faculties.map((f) => (
@@ -137,7 +137,7 @@ export const RatingView: React.FC<RatingViewProps> = ({
             value={selectedCourse}
             onChange={(e) => setSelectedCourse(e.target.value)}
             aria-label="Kurs filtri"
-            className="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 text-slate-700 font-medium focus:outline-none focus:border-sky-500"
+            className="flex-1 sm:flex-initial bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 text-slate-700 font-medium focus:outline-none focus:border-sky-500 text-xs"
           >
             <option value="all">Barcha kurslar</option>
             <option value="1">1-kurs</option>
@@ -202,7 +202,7 @@ export const RatingView: React.FC<RatingViewProps> = ({
 
       {/* Leaderboard Table */}
       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
-        <div className="p-4 border-b border-slate-100 bg-slate-50 font-bold text-xs text-slate-700 flex items-center justify-between">
+        <div className="p-4 border-b border-slate-100 bg-slate-50 font-bold text-xs text-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1">
           <span>Eng Faol Iqtidorli Talabalar Reyting Jadvali ({sortedStudents.length} ta)</span>
           <span className="text-slate-400 font-normal text-[11px]">Ballar bo‘yicha avtomat hisoblangan</span>
         </div>

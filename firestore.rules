@@ -33,6 +33,16 @@ service cloud.firestore {
       allow write: if true;
     }
 
+    match /teachers/{teacherId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
     match /system/{docId} {
       allow read: if true;
       allow write: if true;

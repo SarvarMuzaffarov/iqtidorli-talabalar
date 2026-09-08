@@ -7,6 +7,8 @@ const KEYS = {
   EVENTS: 'talenthub_tkti_events_v1',
   ANNOUNCEMENTS: 'talenthub_tkti_announcements_v1',
   CERTIFICATES: 'talenthub_tkti_certificates_v1',
+  TEACHERS: 'talenthub_tkti_teachers_v1',
+  ACCOUNTS: 'talenthub_tkti_accounts_v1',
   RULES: 'talenthub_tkti_rules_v1',
   ACTIVE_ROLE: 'talenthub_tkti_role_v1',
   ACTIVE_STUDENT_ID: 'talenthub_tkti_active_student_v1',
